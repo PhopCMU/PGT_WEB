@@ -1,4 +1,4 @@
-import { CheckCircle, RefreshCw, X } from "lucide-react";
+import { CheckCircle, RefreshCw, X, Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useRegisterSW } from "virtual:pwa-register/react";
 
@@ -14,6 +14,22 @@ export const UpdatePrompt: React.FC = () => {
   });
 
   const [isVisible, setIsVisible] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  useEffect(() => {
+    // ตรวจสอบเวอร์ชันใน localStorage
+    const savedVersion = localStorage.getItem("app_version");
+    const currentVersion = __APP_VERSION__;
+
+    if (!savedVersion) {
+      // ถ้ายังไม่มีการบันทึกเวอร์ชัน ให้บันทึกเวอร์ชันปัจจุบันลงไป
+      localStorage.setItem("app_version", currentVersion);
+    } else if (savedVersion !== currentVersion) {
+      // ถ้าเวอร์ชันไม่ตรงกัน ให้แสดงป๊อปอัพอัพเดต
+      setNeedRefresh(true);
+      setIsVisible(true);
+    }
+  }, [setNeedRefresh]);
 
   useEffect(() => {
     if (needRefresh || offlineReady) {
@@ -22,6 +38,7 @@ export const UpdatePrompt: React.FC = () => {
   }, [needRefresh, offlineReady]);
 
   const close = () => {
+    if (isUpdating) return; // ห้ามปิดขณะกำลังอัพเดต
     setIsVisible(false);
     setTimeout(() => {
       setNeedRefresh(false);
@@ -30,7 +47,38 @@ export const UpdatePrompt: React.FC = () => {
   };
 
   const onRefresh = async () => {
-    await updateServiceWorker(true);
+    setIsUpdating(true);
+    
+    try {
+      // บันทึกเวอร์ชันล่าสุดลง localStorage ก่อนอัพเดต
+      localStorage.setItem("app_version", __APP_VERSION__);
+
+      // ล้าง Cache และ Service Worker เพื่อความมั่นใจว่าได้ของใหม่จริงๆ
+      if ("serviceWorker" in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        for (const registration of registrations) {
+          await registration.unregister();
+        }
+      }
+
+      if ("caches" in window) {
+        const cacheNames = await caches.keys();
+        for (const name of cacheNames) {
+          await caches.delete(name);
+        }
+      }
+
+      // สั่งอัพเดตผ่าน Vite PWA Plugin
+      await updateServiceWorker(true);
+      
+      // ถ้า updateServiceWorker ไม่ทำการ reload ให้ เราจะบังคับ reload เอง
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } catch (error) {
+      console.error("Update failed:", error);
+      setIsUpdating(false);
+    }
   };
 
   if (!isVisible) return null;
@@ -41,7 +89,15 @@ export const UpdatePrompt: React.FC = () => {
         isVisible ? "translate-y-0" : "-translate-y-full"
       }`}
     >
-      <div className="bg-linear-to-r from-blue-600 to-indigo-600 text-white shadow-lg">
+      <div className="bg-linear-to-r from-blue-600 to-indigo-600 text-white shadow-lg relative overflow-hidden">
+        {/* Loading Overlay */}
+        {isUpdating && (
+          <div className="absolute inset-0 bg-blue-700/80 backdrop-blur-sm z-20 flex items-center justify-center gap-3">
+            <Loader2 className="w-6 h-6 animate-spin" />
+            <span className="font-bold tracking-wide">กำลังรีเซ็ตและอัพเดตระบบ...</span>
+          </div>
+        )}
+
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -55,18 +111,18 @@ export const UpdatePrompt: React.FC = () => {
               <div>
                 <p className="font-semibold">
                   {needRefresh
-                    ? "อัพเดตใหม่พร้อมใช้งาน"
+                    ? "อัพเดตใหม่พร้อมใช้งาน (v" + __APP_VERSION__ + ")"
                     : "พร้อมใช้งานแบบออนไลน์"}
                 </p>
                 <p className="text-sm text-white/90">
                   {needRefresh
-                    ? "คลิกอัพเดตเพื่อรับฟีเจอร์ใหม่"
-                    : "แอปของคุณพร้อมใช้งานโดยต้องต่ออินเทอร์เน็ต"}
+                    ? "คลิกอัพเดตเพื่อรับฟีเจอร์ใหม่และรีเซ็ตระบบ"
+                    : "แอปของคุณพร้อมใช้งานโดยไม่ต้องต่ออินเทอร์เน็ต"}
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              {needRefresh && (
+              {needRefresh && !isUpdating && (
                 <button
                   onClick={close}
                   className="px-4 py-2 text-sm bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
@@ -76,20 +132,32 @@ export const UpdatePrompt: React.FC = () => {
               )}
               <button
                 onClick={needRefresh ? onRefresh : close}
-                className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all ${
+                disabled={isUpdating}
+                className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all flex items-center gap-2 ${
                   needRefresh
                     ? "bg-white text-blue-600 hover:bg-blue-50"
                     : "bg-emerald-500 hover:bg-emerald-600 text-white"
-                }`}
+                } ${isUpdating ? "opacity-50 cursor-not-allowed" : ""}`}
               >
-                {needRefresh ? "อัพเดต" : "ตกลง"}
+                {isUpdating ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    กำลังอัพเดต
+                  </>
+                ) : needRefresh ? (
+                  "อัพเดต"
+                ) : (
+                  "ตกลง"
+                )}
               </button>
-              <button
-                onClick={close}
-                className="p-2 hover:bg-white/20 rounded-lg transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
+              {!isUpdating && (
+                <button
+                  onClick={close}
+                  className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
             </div>
           </div>
         </div>

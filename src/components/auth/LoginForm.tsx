@@ -238,7 +238,7 @@ export default function LoginForm() {
                       <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-900/50 rounded-full border border-gray-800/50">
                         <Sparkles className="w-3 h-3 text-blue-400" />
                         <span className="text-xs text-gray-400">
-                          v{import.meta.env.VITE_APP_VERSION} • Secure Login
+                          v{__APP_VERSION__} • Secure Login
                           Portal
                         </span>
                       </div>

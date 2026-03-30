@@ -330,7 +330,7 @@ const Sidebar = ({ isOpen, onClose, user }: SidebarProps) => {
                 )}
               </div>
               <div className="text-xs text-gray-500 mt-1">
-                Version {import.meta.env.VITE_APP_VERSION}
+                Version {__APP_VERSION__}
               </div>
             </div>
           </div>

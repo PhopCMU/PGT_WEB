@@ -162,7 +162,7 @@ const ProfileDropdown = () => {
               {/* Footer */}
               <div className="p-3 border-t border-gray-300 bg-gray-50 rounded-b-xl">
                 <div className="text-xs text-gray-500 text-center">
-                  V.{import.meta.env.VITE_APP_VERSION} • © 2026 PGT CMU
+                  V.{__APP_VERSION__} • © 2026 PGT CMU
                 </div>
               </div>
             </div>

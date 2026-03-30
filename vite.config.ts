@@ -2,8 +2,12 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
+import pkg from "./package.json";
 
 export default defineConfig({
+  define: {
+    __APP_VERSION__: JSON.stringify(pkg.version),
+  },
   // =========================
   // 🔌 Plugins ที่ใช้ใน Vite
   // =========================
@@ -32,8 +36,8 @@ export default defineConfig({
       ],
 
       // วิธี register Service Worker
-      // autoUpdate = เมื่อมีเวอร์ชันใหม่ จะอัปเดต SW ให้อัตโนมัติ
-      registerType: "autoUpdate",
+      // prompt = เมื่อมีเวอร์ชันใหม่ จะแสดง popup ให้ผู้ใช้กดอัปเดตเอง
+      registerType: "prompt",
 
       // ตัวเลือกสำหรับตอน run `vite dev`
       devOptions: {
