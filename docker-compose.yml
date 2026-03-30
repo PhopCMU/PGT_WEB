@@ -1,0 +1,10 @@
+services:
+  frontend:
+    image: nginx:alpine
+    container_name: pgt_frontend
+    ports:
+      - "3302:80"
+    volumes:
+      - /var/www/pgt.ac.th/dist:/var/www/html:ro
+      - /var/www/pgt.ac.th/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    restart: always

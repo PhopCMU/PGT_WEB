@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0f172a" />
+
+    <!-- PWA Meta Tags -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="PGTCMU" />
+
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+    <link rel="apple-touch-startup-image" href="/icons/maskable-512.png" />
+
+    <title>Postgraduate Education Center</title>
+
+    <!-- Inline Styles for Splash Screen -->
+    <style>
+      /* Splash Screen */
+      #splash-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #0f172a;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        transition:
+          opacity 0.3s ease,
+          visibility 0.3s ease;
+      }
+
+      .splash-logo {
+        width: 120px;
+        height: 120px;
+        margin-bottom: 30px;
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      .splash-logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+
+      .splash-spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-top: 4px solid #ffffff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 20px;
+      }
+
+      .splash-text {
+        color: #ffffff;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+          "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+          sans-serif;
+        font-size: 16px;
+        opacity: 0.8;
+        text-align: center;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Splash Screen (แสดงทันทีก่อน React โหลด) -->
+    <div id="splash-screen">
+      <div class="splash-logo">
+        <img src="/icons/maskable-512.png" alt="PGTCMU Logo" />
+      </div>
+      <div class="splash-spinner"></div>
+      <div class="splash-text">กำลังโหลดแอปพลิเคชัน...</div>
+    </div>
+
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Script สำหรับซ่อน Splash Screen -->
+    <script>
+      // ฟังก์ชันสำหรับซ่อน splash screen
+      window.hideSplashScreen = function () {
+        const splash = document.getElementById("splash-screen");
+        if (splash) {
+          splash.style.opacity = "0";
+          setTimeout(() => {
+            splash.style.display = "none";
+            splash.style.visibility = "hidden";
+          }, 300);
+        }
+      };
+
+      // ซ่อนอัตโนมัติเมื่อหน้าโหลดเสร็จ (กรณีไม่มี React เรียก)
+      window.addEventListener("load", () => {
+        setTimeout(() => {
+          window.hideSplashScreen();
+        }, 1000);
+      });
+    </script>
+  </body>
+</html>
