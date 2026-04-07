@@ -23,7 +23,7 @@ import {
   Check,
   Copy,
 } from "lucide-react";
-import { getUserFromToken } from "../utils/authService";
+import { getToken, getUserFromToken } from "../utils/authService";
 import { Get_ProjectsList } from "../services/GetService";
 import type { ActivityType, Project } from "../types/types";
 import {
@@ -32,6 +32,7 @@ import {
   blobToFile,
   compressImageToMaxSize,
   formatRelativeTime,
+  formatTHDateTime,
   getCurrentPrice,
   getRegistrationsCountForPackage,
   getTotalCapacity,
@@ -44,7 +45,13 @@ import {
   safeToMs,
 } from "../utils/helpers";
 import { Post_Register } from "../services/PostServer";
+import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import {
+  usePgtRealtime,
+  type RegistrationCreatedPayload,
+  type ProjectUpdatedPayload,
+} from "../realtime/usePgtRealtime";
 
 export default function Dashboard() {
   const [page, setPage] = useState(1);
@@ -85,28 +92,83 @@ export default function Dashboard() {
   // /*----Fetch Data----*/
   const hasFetchedDataRef = useRef(false);
   const [projects, setProjects] = useState<Project[]>([]);
+  const fetchDataProjects = async () => {
+    try {
+      const email = (user as any).email || "";
+      const response = await Get_ProjectsList(email);
+
+      if (!response?.success) {
+        console.error("Fetch projects failed:", response?.message);
+        setProjects([]);
+        return;
+      }
+
+      const normalized = (response.results || []).map(normalizeProject);
+      setProjects(normalized);
+    } catch (error) {
+      console.error("Fetch projects error:", error);
+      setProjects([]);
+    }
+  };
+
+  // Realtime throttle — ป้องกันโหลดซ้ำถี่เกินไป
+  const lastRealtimeReloadRef = useRef(0);
+  const REALTIME_COOLDOWN_MS = 10_000; // 10 seconds
+
+  const throttledFetchDataProjects = () => {
+    const now = Date.now();
+    if (now - lastRealtimeReloadRef.current < REALTIME_COOLDOWN_MS) return;
+    lastRealtimeReloadRef.current = now;
+    fetchDataProjects();
+  };
+
+  // Optimistic update — อัปเดต count ใน local state ทันทีโดยไม่รอ API
+  const applyRegistrationCreated = (payload: RegistrationCreatedPayload) => {
+    setProjects((prev) =>
+      prev.map((p) => {
+        if (String(p.id) !== String(payload.projectId)) return p;
+        const newReg = {
+          projectId: payload.projectId,
+          packageName: payload.activityType?.toUpperCase() ?? "",
+        };
+        return {
+          ...p,
+          count_regi: p.count_regi + 1,
+          pgtProjectRegistrations: [
+            ...(p.pgtProjectRegistrations || []),
+            newReg,
+          ],
+        };
+      }),
+    );
+  };
+
+  const applyProjectUpdated = (payload: ProjectUpdatedPayload) => {
+    if (payload.countRegi == null) return;
+    setProjects((prev) =>
+      prev.map((p) =>
+        String(p.id) === String(payload.projectId)
+          ? { ...p, count_regi: payload.countRegi! }
+          : p,
+      ),
+    );
+  };
+
+  // Realtime Connection
+  const { status } = usePgtRealtime({
+    token: getToken() ?? "",
+    onRegistrationCreated: (payload) => {
+      applyRegistrationCreated(payload); // อัปเดต UI ทันที
+      throttledFetchDataProjects(); // sync กับ API ใน background
+    },
+    onProjectUpdated: (payload) => {
+      applyProjectUpdated(payload); // อัปเดต count ทันที
+      throttledFetchDataProjects(); // sync กับ API ใน background
+    },
+  });
   useEffect(() => {
     if (hasFetchedDataRef.current) return;
     hasFetchedDataRef.current = true;
-
-    const fetchDataProjects = async () => {
-      try {
-        const email = (user as any).email || "";
-        const response = await Get_ProjectsList(email);
-
-        if (!response?.success) {
-          console.error("Fetch projects failed:", response?.message);
-          setProjects([]);
-          return;
-        }
-
-        const normalized = (response.results || []).map(normalizeProject);
-        setProjects(normalized);
-      } catch (error) {
-        console.error("Fetch projects error:", error);
-        setProjects([]);
-      }
-    };
 
     fetchDataProjects();
   }, [user]);
@@ -135,7 +197,6 @@ export default function Dashboard() {
     const closingSoon = isClosingSoon(project.close_regi);
     const earlyBadge = isEarlyBirdNow(project.open_regi);
     const [errors, setErrors] = useState("");
-    const [info, setInfo] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
     // เลือกกิจกรรม/แพ็กเกจ
@@ -177,6 +238,20 @@ export default function Dashboard() {
     }) => {
       setIsLoading(true);
       setErrors("");
+
+      Swal.fire({
+        title: "กำลังส่งข้อมูล...",
+        text: "กรุณารอสักครู่",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        background: "#111827",
+        color: "#e2e8f0",
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
       try {
         const binary = base64ToBlob(project.slipPayment, "image/jpeg");
         let binaryName = blobToFile(
@@ -185,7 +260,15 @@ export default function Dashboard() {
         );
 
         if (!binaryName) {
-          setErrors("Invalid file");
+          Swal.fire({
+            icon: "error",
+            title: "ไฟล์ไม่ถูกต้อง",
+            text: "Invalid file",
+            background: "#111827",
+            color: "#e2e8f0",
+            confirmButtonColor: "#3b82f6",
+            confirmButtonText: "ลองอีกครั้ง",
+          });
           return;
         }
 
@@ -207,20 +290,53 @@ export default function Dashboard() {
 
         const response = await Post_Register(formData);
         if (!response?.success) {
-          setErrors(response?.message?.mgs || "Registration failed");
+          Swal.fire({
+            icon: "error",
+            title: "สมัครไม่สำเร็จ",
+            text: response?.message?.mgs || "Registration failed",
+            background: "#111827",
+            color: "#e2e8f0",
+            confirmButtonColor: "#3b82f6",
+            confirmButtonText: "ลองอีกครั้ง",
+          });
           return;
         }
 
-        setInfo("ลงทะเบียนสําเร็จ / Registered successfully");
-        setTimeout(() => {
+        // บล็อก socket event ไม่ให้ trigger re-fetch ระหว่างแสดง success (6 วินาที)
+        lastRealtimeReloadRef.current = Date.now() + 6_000;
+
+        Swal.fire({
+          icon: "success",
+          title: "ลงทะเบียนสำเร็จ!",
+          html: "<span style='color:#94a3b8'>ระบบได้รับการสมัครของคุณแล้ว</span>",
+          background: "#111827",
+          color: "#e2e8f0",
+          timer: 5000,
+          timerProgressBar: true,
+          confirmButtonColor: "#10b981",
+          confirmButtonText: "ดูโปรเจคที่สมัคร",
+          showCancelButton: true,
+          cancelButtonText: "ปิด",
+          cancelButtonColor: "#374151",
+        }).then((result) => {
           setSlipPayment(null);
           setSelectedType(null);
-          setInfo("");
           handleRefresh();
-        }, 5000);
+          if (result.isConfirmed) {
+            navigate("/project-registration-list");
+          }
+        });
       } catch (error) {
         console.error("Registration failed:", error);
-        setErrors("เกิดข้อผิดพลาดในการสมัคร กรุณาลองอีกครั้ง");
+        Swal.fire({
+          icon: "error",
+          title: "เกิดข้อผิดพลาด",
+          text: "เกิดข้อผิดพลาดในการสมัคร กรุณาลองอีกครั้ง",
+          background: "#111827",
+          color: "#e2e8f0",
+          confirmButtonColor: "#3b82f6",
+          confirmButtonText: "ลองอีกครั้ง",
+        });
       } finally {
         setIsLoading(false);
       }
@@ -262,7 +378,7 @@ export default function Dashboard() {
 
     // /*----Copy Account Number----*/
     const [copied, setCopied] = useState(false);
-    const accountNumber = "667-458463-6"; // เลขบัญชี
+    const accountNumber = "667-212002-0"; // เลขบัญชี
 
     const handleCopy = async () => {
       try {
@@ -345,85 +461,56 @@ export default function Dashboard() {
             {project.detail}
           </p>
 
-          {/* Success Message */}
-          {info && (
-            <div className="mt-4 p-4 bg-linear-to-r from-green-900/30 to-teal-900/30 border border-green-800/50 rounded-xl backdrop-blur-sm">
-              <div className="flex flex-col gap-3">
-                <div className="flex justify-center items-center">
-                  <div className="shrink-0 p-2 bg-linear-to-br from-green-600 to-teal-600 rounded-lg">
-                    <CheckCircle className="w-5 h-5 text-white" />
-                  </div>
-                </div>
-                <div className="flex-1 text-center ">
-                  <h4 className="font-semibold text-green-200 mb-1">
-                    ลงทะเบียนสำเร็จ!
-                  </h4>
-                  <p className="text-sm text-green-300 mb-3">{info}</p>
-                  <div className="flex flex-col sm:flex-row justify-center gap-2">
-                    <button
-                      onClick={() => navigate("/project-registration-list")}
-                      className="px-4 py-2 bg-linear-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white rounded-lg font-medium text-sm transition-all hover:shadow-lg"
-                    >
-                      ไปยังหน้าโปรเจคที่สมัคร
-                    </button>
-                  </div>
-                </div>
+          {/* Activity Selection */}
+          {!isClosed(project.close_regi) && !isNotYetOpen(project.open_regi) ? (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Database className="w-4 h-4 text-blue-400" />
+                <span className="text-sm font-medium text-gray-300">
+                  เลือกแพ็กเกจ/กิจกรรม
+                </span>
               </div>
-            </div>
-          )}
 
-          {!info && (
-            <>
-              {/* Activity Selection */}
-              {!isClosed(project.close_regi) ? (
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Database className="w-4 h-4 text-blue-400" />
-                    <span className="text-sm font-medium text-gray-300">
-                      เลือกแพ็กเกจ/กิจกรรม
-                    </span>
-                  </div>
+              <div className="space-y-3">
+                {project.activities.map((a) => {
+                  const price = getCurrentPrice(a, project.open_regi);
+                  const isChecked = selectedType === a.type;
+                  const activityFull = isActivityFullByRegistrations(
+                    project,
+                    a,
+                  );
+                  const regsCount = getRegistrationsCountForPackage(
+                    project,
+                    a.type,
+                  );
+                  const remaining = Math.max(
+                    0,
+                    Number(a.capacity || 0) - regsCount,
+                  );
 
-                  <div className="space-y-3">
-                    {project.activities.map((a) => {
-                      const price = getCurrentPrice(a, project.open_regi);
-                      const isChecked = selectedType === a.type;
-                      const activityFull = isActivityFullByRegistrations(
-                        project,
-                        a,
-                      );
-                      const regsCount = getRegistrationsCountForPackage(
-                        project,
-                        a.type,
-                      );
-                      const remaining = Math.max(
-                        0,
-                        Number(a.capacity || 0) - regsCount,
-                      );
+                  const handleSelect = () => {
+                    if (activityFull) return;
+                    if (isNotYetOpen(project.open_regi)) return;
+                    setSelectedType(a.type);
+                    setErrors("");
+                  };
 
-                      const handleSelect = () => {
-                        if (activityFull) return;
-                        if (isNotYetOpen(project.open_regi)) return;
-                        setSelectedType(a.type);
-                        setErrors("");
-                      };
-
-                      return (
-                        <label
-                          key={`${a.type}-${a.id ?? Math.random()}`}
-                          className={[
-                            "flex items-center justify-between gap-3 rounded-xl border px-4 py-3 cursor-pointer transition-all",
-                            isChecked && !activityFull
-                              ? "border-blue-500 bg-blue-900/20"
-                              : activityFull
-                                ? "border-gray-700 bg-gray-900/50 cursor-not-allowed opacity-60"
-                                : "border-gray-700 bg-gray-900/30 hover:bg-gray-800/50",
-                          ].join(" ")}
-                          onClick={handleSelect}
-                        >
-                          <div className="flex items-center gap-3">
-                            <div
-                              className={`w-5 h-5 rounded-full border-2 flex items-center justify-center
+                  return (
+                    <label
+                      key={`${a.type}-${a.id ?? Math.random()}`}
+                      className={[
+                        "flex items-center justify-between gap-3 rounded-xl border px-4 py-3 cursor-pointer transition-all",
+                        isChecked && !activityFull
+                          ? "border-blue-500 bg-blue-900/20"
+                          : activityFull
+                            ? "border-gray-700 bg-gray-900/50 cursor-not-allowed opacity-60"
+                            : "border-gray-700 bg-gray-900/30 hover:bg-gray-800/50",
+                      ].join(" ")}
+                      onClick={handleSelect}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center
                               ${
                                 isChecked && !activityFull
                                   ? "border-blue-500 bg-blue-500"
@@ -431,151 +518,149 @@ export default function Dashboard() {
                               }
                               ${activityFull ? "border-gray-500" : ""}
                             `}
-                            >
-                              {isChecked && !activityFull && (
-                                <div className="w-2 h-2 rounded-full bg-white"></div>
-                              )}
-                            </div>
-                            <div className="flex flex-col">
-                              <span
-                                className={`text-sm font-semibold ${
-                                  activityFull
-                                    ? "text-gray-500"
-                                    : "text-gray-200"
-                                }`}
-                              >
-                                {activityLabel(a.type)}
-                              </span>
-                              <div className="flex items-center gap-2 mt-1">
-                                <span className="text-xs text-gray-500">
-                                  {/* {a.capacity} คน */}
-                                </span>
-                                <div className="w-1 h-1 bg-gray-600 rounded-full"></div>
-                                <span className="text-xs text-gray-500">
-                                  สมัครแล้ว {regsCount} คน
-                                </span>
-                                <div className="w-1 h-1 bg-gray-600 rounded-full"></div>
-                                <span
-                                  className={`text-xs font-medium ${
-                                    remaining <= 5
-                                      ? "text-red-400"
-                                      : "text-green-400"
-                                  }`}
-                                >
-                                  {/* คงเหลือ {remaining} คน */}
-                                </span>
-                              </div>
-                              {activityFull && (
-                                <span className="mt-2 inline-flex items-center gap-1.5 px-2 py-1 text-xs rounded bg-red-900/30 border border-red-800/50 text-red-300 w-fit">
-                                  เต็มแล้ว
-                                </span>
-                              )}
-                            </div>
-                          </div>
-
-                          <div className="text-right">
-                            <div
-                              className={`text-lg font-bold ${
-                                activityFull ? "text-gray-500" : "text-white"
+                        >
+                          {isChecked && !activityFull && (
+                            <div className="w-2 h-2 rounded-full bg-white"></div>
+                          )}
+                        </div>
+                        <div className="flex flex-col">
+                          <span
+                            className={`text-sm font-semibold ${
+                              activityFull ? "text-gray-500" : "text-gray-200"
+                            }`}
+                          >
+                            {activityLabel(a.type)}
+                          </span>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-xs text-gray-500">
+                              {/* {a.capacity} คน */}
+                            </span>
+                            <div className="w-1 h-1 bg-gray-600 rounded-full"></div>
+                            <span className="text-xs text-gray-500">
+                              สมัครแล้ว {regsCount} คน
+                            </span>
+                            <div className="w-1 h-1 bg-gray-600 rounded-full"></div>
+                            <span
+                              className={`text-xs font-medium ${
+                                remaining <= 5
+                                  ? "text-red-400"
+                                  : "text-green-400"
                               }`}
                             >
-                              ฿{price.toLocaleString("th-TH")}
-                            </div>
-                            <div className="text-xs text-gray-400">
-                              {isEarlyBirdNow(project.open_regi)
-                                ? "Early Bird"
-                                : "Regular"}
-                            </div>
+                              คงเหลือ {remaining} คน
+                            </span>
                           </div>
-                        </label>
-                      );
-                    })}
-                  </div>
-                </div>
-              ) : (
-                <div className="inline-flex items-center gap-2 bg-linear-to-r from-gray-900/50 to-gray-800/50 text-gray-400 text-sm font-medium px-4 py-2.5 rounded-xl border border-gray-700">
-                  <Clock size={14} />
-                  ปิดรับสมัคร
-                </div>
-              )}
+                          {activityFull && (
+                            <span className="mt-2 inline-flex items-center gap-1.5 px-2 py-1 text-xs rounded bg-red-900/30 border border-red-800/50 text-red-300 w-fit">
+                              เต็มแล้ว
+                            </span>
+                          )}
+                        </div>
+                      </div>
 
-              {/* Project Status */}
-              <div>
-                {(() => {
-                  const totalCapacity = getTotalCapacity(project.activities);
-                  const enrolled = Number(project.count_regi ?? 0);
-                  const closed = isClosed(project.close_regi);
-                  const notYetOpen = isNotYetOpen(project.open_regi);
-                  const open = isRegiOpen(
-                    project.open_regi,
-                    project.close_regi,
+                      <div className="text-right">
+                        <div
+                          className={`text-lg font-bold ${
+                            activityFull ? "text-gray-500" : "text-white"
+                          }`}
+                        >
+                          ฿{price.toLocaleString("th-TH")}
+                        </div>
+                        <div className="text-xs text-gray-400">
+                          {isEarlyBirdNow(project.open_regi)
+                            ? "Early Bird"
+                            : "Regular"}
+                        </div>
+                      </div>
+                    </label>
                   );
-                  const full = enrolled >= totalCapacity && totalCapacity > 0;
-
-                  if (closed) {
-                    return (
-                      <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-900/50 border border-gray-700 rounded-lg">
-                        <div className="w-2 h-2 bg-gray-500 rounded-full" />
-                        <span className="text-sm font-medium text-gray-400">
-                          ปิดรับสมัคร
-                        </span>
-                      </div>
-                    );
-                  }
-
-                  if (full) {
-                    return (
-                      <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-red-900/30 border border-red-800/50 rounded-lg">
-                        <div className="w-2 h-2 bg-red-500 rounded-full" />
-                        <span className="text-sm font-medium text-red-300">
-                          เต็มแล้ว
-                        </span>
-                      </div>
-                    );
-                  }
-
-                  if (notYetOpen) {
-                    return (
-                      <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-yellow-900/30 border border-yellow-800/50 rounded-lg">
-                        <div className="w-2 h-2 bg-yellow-500 rounded-full" />
-                        <span className="text-sm font-medium text-yellow-300">
-                          รอเปิดรับ
-                        </span>
-                      </div>
-                    );
-                  }
-
-                  if (open) {
-                    const early = isEarlyBirdNow(project.open_regi);
-                    return early ? (
-                      <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-yellow-900/30 border border-yellow-800/50 rounded-lg">
-                        <div className="w-2 h-2 bg-yellow-500 rounded-full" />
-                        <span className="text-sm font-medium text-yellow-300">
-                          Early Bird
-                        </span>
-                      </div>
-                    ) : (
-                      <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-900/30 border border-blue-800/50 rounded-lg">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                        <span className="text-sm font-medium text-blue-300">
-                          เปิดรับสมัคร
-                        </span>
-                      </div>
-                    );
-                  }
-
-                  return (
-                    <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-900/50 border border-gray-700 rounded-lg">
-                      <div className="w-2 h-2 bg-gray-500 rounded-full" />
-                      <span className="text-sm font-medium text-gray-400">
-                        สถานะไม่ระบุ
-                      </span>
-                    </div>
-                  );
-                })()}
+                })}
               </div>
+            </div>
+          ) : (
+            <div className="inline-flex items-center gap-2 bg-linear-to-r from-gray-900/50 to-gray-800/50 text-gray-400 text-sm font-medium px-4 py-2.5 rounded-xl border border-gray-700">
+              <Clock size={14} />
+              ปิดรับสมัคร
+            </div>
+          )}
 
-              {/* Info Footer */}
+          {/* Project Status */}
+          <div>
+            {(() => {
+              const totalCapacity = getTotalCapacity(project.activities);
+              const enrolled = Number(project.count_regi ?? 0);
+              const closed = isClosed(project.close_regi);
+              const notYetOpen = isNotYetOpen(project.open_regi);
+              const open = isRegiOpen(project.open_regi, project.close_regi);
+              const full = enrolled >= totalCapacity && totalCapacity > 0;
+
+              if (closed) {
+                return (
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-900/50 border border-gray-700 rounded-lg">
+                    <div className="w-2 h-2 bg-gray-500 rounded-full" />
+                    <span className="text-sm font-medium text-gray-400">
+                      ปิดรับสมัคร
+                    </span>
+                  </div>
+                );
+              }
+
+              if (full) {
+                return (
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-red-900/30 border border-red-800/50 rounded-lg">
+                    <div className="w-2 h-2 bg-red-500 rounded-full" />
+                    <span className="text-sm font-medium text-red-300">
+                      เต็มแล้ว
+                    </span>
+                  </div>
+                );
+              }
+
+              if (notYetOpen) {
+                return (
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-yellow-900/30 border border-yellow-800/50 rounded-lg">
+                    <div className="w-2 h-2 bg-yellow-500 rounded-full" />
+                    <span className="text-sm font-medium text-yellow-300">
+                      เปิดลงทะเบียน {">"} {formatTHDateTime(project.open_regi)}
+                    </span>
+                  </div>
+                );
+              }
+
+              if (open) {
+                const early = isEarlyBirdNow(project.open_regi);
+                return early ? (
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-yellow-900/30 border border-yellow-800/50 rounded-lg">
+                    <div className="w-2 h-2 bg-yellow-500 rounded-full" />
+                    <span className="text-sm font-medium text-yellow-300">
+                      Early Bird
+                    </span>
+                  </div>
+                ) : (
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-900/30 border border-blue-800/50 rounded-lg">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full" />
+                    <span className="text-sm font-medium text-blue-300">
+                      เปิดรับสมัคร {formatTHDateTime(project.open_regi)} -{" "}
+                      {formatTHDateTime(project.close_regi)}
+                    </span>
+                  </div>
+                );
+              }
+
+              return (
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-900/50 border border-gray-700 rounded-lg">
+                  <div className="w-2 h-2 bg-gray-500 rounded-full" />
+                  <span className="text-sm font-medium text-gray-400">
+                    สถานะไม่ระบุ
+                  </span>
+                </div>
+              );
+            })()}
+          </div>
+
+          {/* Info Footer */}
+          {!isNotYetOpen(project.open_regi) && (
+            <>
               <div className="pt-4 border-t border-gray-800">
                 <div className="flex items-center justify-between text-sm text-gray-400">
                   <div className="flex items-center gap-2">
@@ -593,7 +678,6 @@ export default function Dashboard() {
                   </div> */}
                 </div>
               </div>
-
               {/* Slip Payment */}
               <div className="space-y-4">
                 <div className="flex flex-col gap-3 p-4 bg-gray-900/50 rounded-xl border border-gray-700">
@@ -607,47 +691,53 @@ export default function Dashboard() {
                     </span>
                   </div>
 
-                  {/* ข้อมูลบัญชีแบบกะทัดรัด */}
-                  <div className="space-y-2 text-xs">
-                    {/* ธนาคาร */}
-                    <div className="flex items-center gap-2">
-                      <span className="text-gray-500 w-14">ธนาคาร:</span>
-                      <span className="text-gray-300 font-medium">
-                        ไทยพาณิชย์ สาขามหาวิทยาลัยเชียงใหม่
-                      </span>
-                    </div>
+                  {/* ข้อมูลบัญชี — แสดงเฉพาะเมื่อเลือก Package แล้ว */}
+                  {selectedType ? (
+                    <div className="space-y-2 text-xs">
+                      {/* ธนาคาร */}
+                      <div className="flex items-center gap-2">
+                        <span className="text-gray-500 w-14">ธนาคาร:</span>
+                        <span className="text-gray-300 font-medium">
+                          ไทยพาณิชย์ สาขามหาวิทยาลัยเชียงใหม่
+                        </span>
+                      </div>
 
-                    {/* ชื่อบัญชี */}
-                    <div className="flex items-start gap-2">
-                      <span className="text-gray-500 w-14 shrink-0">
-                        ชื่อบัญชี:
-                      </span>
-                      <span className="text-gray-300">
-                        คณะสัตวแพทยศาสตร์ มหาวิทยาลัยเชียงใหม่
-                      </span>
-                    </div>
+                      {/* ชื่อบัญชี */}
+                      <div className="flex items-start gap-2">
+                        <span className="text-gray-500 w-14 shrink-0">
+                          ชื่อบัญชี:
+                        </span>
+                        <span className="text-gray-300">
+                          คณะสัตวแพทยศาสตร์ มหาวิทยาลัยเชียงใหม่
+                        </span>
+                      </div>
 
-                    {/* เลขบัญชีพร้อมคัดลอก */}
-                    <div className="flex items-center gap-2">
-                      <span className="text-gray-500 w-14">เลขบัญชี:</span>
-                      <div className="flex items-center gap-2 flex-1">
-                        <div className="font-mono text-gray-100 font-bold tracking-wider bg-gray-800/50 px-2 py-1 rounded border border-gray-700">
-                          667-212002-0
+                      {/* เลขบัญชีพร้อมคัดลอก */}
+                      <div className="flex items-center gap-2">
+                        <span className="text-gray-500 w-14">เลขบัญชี:</span>
+                        <div className="flex items-center gap-2 flex-1">
+                          <div className="font-mono text-gray-100 font-bold tracking-wider bg-gray-800/50 px-2 py-1 rounded border border-gray-700">
+                            667-212002-0
+                          </div>
+                          <button
+                            onClick={handleCopy}
+                            className="p-1.5 rounded-md hover:bg-gray-800 transition-colors shrink-0"
+                            title="คัดลอกเลขบัญชี"
+                          >
+                            {copied ? (
+                              <Check className="w-3.5 h-3.5 text-green-400" />
+                            ) : (
+                              <Copy className="w-3.5 h-3.5 text-gray-400 hover:text-blue-400" />
+                            )}
+                          </button>
                         </div>
-                        <button
-                          onClick={handleCopy}
-                          className="p-1.5 rounded-md hover:bg-gray-800 transition-colors shrink-0"
-                          title="คัดลอกเลขบัญชี"
-                        >
-                          {copied ? (
-                            <Check className="w-3.5 h-3.5 text-green-400" />
-                          ) : (
-                            <Copy className="w-3.5 h-3.5 text-gray-400 hover:text-blue-400" />
-                          )}
-                        </button>
                       </div>
                     </div>
-                  </div>
+                  ) : (
+                    <p className="text-xs text-gray-500 italic">
+                      กรุณาเลือกแพ็กเกจก่อนเพื่อดูข้อมูลบัญชี
+                    </p>
+                  )}
                 </div>
                 <div
                   className={`relative rounded-xl border-2 transition-all ${
@@ -777,61 +867,61 @@ export default function Dashboard() {
                   )}
                 </div>
               </div>
-
-              {/* Action Button */}
-              <button
-                disabled={!canRegister || isLoading}
-                onClick={() => {
-                  if (!canRegister || isLoading) return;
-                  if (!selectedType) return;
-                  if (!slipPayment) return;
-
-                  const payload = {
-                    userId: user?.codeId,
-                    projectId: Number(project.id),
-                    activityType: selectedType!,
-                    pricingTier: earlyBadge ? "EARLY" : "REGULAR",
-                    price: Number(selectedActivityPrice!),
-                    slipPayment,
-                  };
-                  handleRegister(payload);
-                }}
-                className={`w-full px-4 py-3.5 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-3 ${
-                  canRegister && !isLoading
-                    ? "bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white hover:shadow-lg hover:shadow-blue-500/20 active:scale-95"
-                    : "bg-gray-900 border border-gray-800 text-gray-500 cursor-not-allowed"
-                }`}
-              >
-                {isLoading ? (
-                  <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
-                    <span>กำลังสมัคร...</span>
-                  </>
-                ) : !user ? (
-                  <>
-                    <AlertCircle size={18} />
-                    <span>เข้าสู่ระบบ</span>
-                  </>
-                ) : soldOut ? (
-                  "ปิดรับสมัคร"
-                ) : !open ? (
-                  "รอเปิดรับ"
-                ) : !selectedType ? (
-                  "เลือกแพ็กเกจเพื่อสมัคร"
-                ) : !slipPayment ? (
-                  "แนบสลิปก่อน"
-                ) : (
-                  <>
-                    <Shield className="w-5 h-5" />
-                    <span>
-                      สมัครเข้าร่วม • ฿
-                      {Number(selectedActivityPrice).toLocaleString("th-TH")}
-                    </span>
-                  </>
-                )}
-              </button>
             </>
           )}
+
+          {/* Action Button */}
+          <button
+            disabled={!canRegister || isLoading}
+            onClick={() => {
+              if (!canRegister || isLoading) return;
+              if (!selectedType) return;
+              if (!slipPayment) return;
+
+              const payload = {
+                userId: user?.codeId,
+                projectId: Number(project.id),
+                activityType: selectedType!,
+                pricingTier: earlyBadge ? "EARLY" : "REGULAR",
+                price: Number(selectedActivityPrice!),
+                slipPayment,
+              };
+              handleRegister(payload);
+            }}
+            className={`w-full px-4 py-3.5 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-3 ${
+              canRegister && !isLoading
+                ? "bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white hover:shadow-lg hover:shadow-blue-500/20 active:scale-95"
+                : "bg-gray-900 border border-gray-800 text-gray-500 cursor-not-allowed"
+            }`}
+          >
+            {isLoading ? (
+              <>
+                <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                <span>กำลังสมัคร...</span>
+              </>
+            ) : !user ? (
+              <>
+                <AlertCircle size={18} />
+                <span>เข้าสู่ระบบ</span>
+              </>
+            ) : soldOut ? (
+              "ปิดรับสมัคร"
+            ) : !open ? (
+              "เปิดลงทะเบียน " + formatTHDateTime(project.open_regi)
+            ) : !selectedType ? (
+              "เลือกแพ็กเกจเพื่อสมัคร"
+            ) : !slipPayment ? (
+              "แนบสลิปก่อน"
+            ) : (
+              <>
+                <Shield className="w-5 h-5" />
+                <span>
+                  สมัครเข้าร่วม • ฿
+                  {Number(selectedActivityPrice).toLocaleString("th-TH")}
+                </span>
+              </>
+            )}
+          </button>
         </div>
       </div>
     );
@@ -875,45 +965,45 @@ export default function Dashboard() {
   const visible = sorted.slice(sliceStart, sliceStart + PAGE_SIZE);
 
   // Calculate stats
-  const stats = useMemo(() => {
-    const availableProjects = projects.filter((p) => {
-      const soldOut = isSoldOut(p.close_regi);
-      const totalCapacity = getTotalCapacity(p.activities);
-      const enrolled = Number(p.count_regi ?? 0);
-      const isFull = enrolled >= totalCapacity && totalCapacity > 0;
-      return !soldOut && !isFull;
-    });
+  // const stats = useMemo(() => {
+  //   const availableProjects = projects.filter((p) => {
+  //     const soldOut = isSoldOut(p.close_regi);
+  //     const totalCapacity = getTotalCapacity(p.activities);
+  //     const enrolled = Number(p.count_regi ?? 0);
+  //     const isFull = enrolled >= totalCapacity && totalCapacity > 0;
+  //     return !soldOut && !isFull;
+  //   });
 
-    return [
-      {
-        label: "โปรเจ็กต์ทั้งหมด",
-        value: availableProjects.length,
-        icon: <Database className="w-5 h-5" />,
-        color: "from-blue-500 to-cyan-500",
-        bg: "bg-blue-900/20",
-        border: "border-blue-800/30",
-      },
-      {
-        label: "กำลังเปิดรับ",
-        value: availableProjects.filter((p) =>
-          isRegiOpen(p.open_regi, p.close_regi),
-        ).length,
-        icon: <CheckCircle className="w-5 h-5" />,
-        color: "from-emerald-500 to-green-500",
-        bg: "bg-emerald-900/20",
-        border: "border-emerald-800/30",
-      },
-      {
-        label: "จะปิดเร็วนี้",
-        value: availableProjects.filter((p) => isClosingSoon(p.close_regi))
-          .length,
-        icon: <Clock className="w-5 h-5" />,
-        color: "from-amber-500 to-orange-500",
-        bg: "bg-amber-900/20",
-        border: "border-amber-800/30",
-      },
-    ];
-  }, [projects]);
+  //   return [
+  //     {
+  //       label: "โปรเจ็กต์ทั้งหมด",
+  //       value: availableProjects.length,
+  //       icon: <Database className="w-5 h-5" />,
+  //       color: "from-blue-500 to-cyan-500",
+  //       bg: "bg-blue-900/20",
+  //       border: "border-blue-800/30",
+  //     },
+  //     {
+  //       label: "กำลังเปิดรับ",
+  //       value: availableProjects.filter((p) =>
+  //         isRegiOpen(p.open_regi, p.close_regi),
+  //       ).length,
+  //       icon: <CheckCircle className="w-5 h-5" />,
+  //       color: "from-emerald-500 to-green-500",
+  //       bg: "bg-emerald-900/20",
+  //       border: "border-emerald-800/30",
+  //     },
+  //     {
+  //       label: "จะปิดเร็วนี้",
+  //       value: availableProjects.filter((p) => isClosingSoon(p.close_regi))
+  //         .length,
+  //       icon: <Clock className="w-5 h-5" />,
+  //       color: "from-amber-500 to-orange-500",
+  //       bg: "bg-amber-900/20",
+  //       border: "border-amber-800/30",
+  //     },
+  //   ];
+  // }, [projects]);
 
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-900 via-[#111829] to-[#0d1420] py-6 px-4 sm:px-6 lg:px-8">
@@ -930,7 +1020,7 @@ export default function Dashboard() {
                   โครงการทั้งหมด
                 </h1>
                 <p className="text-gray-400 text-sm sm:text-base mt-1">
-                  ค้นหาและสมัครโครงการที่น่าสนใจ
+                  {status}
                 </p>
               </div>
             </div>
@@ -948,7 +1038,7 @@ export default function Dashboard() {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             {stats.map((stat, idx) => (
               <div
                 key={idx}
@@ -969,7 +1059,7 @@ export default function Dashboard() {
                 </div>
               </div>
             ))}
-          </div>
+          </div> */}
         </div>
 
         {/* Controls */}
