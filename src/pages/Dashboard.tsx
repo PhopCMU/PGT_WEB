@@ -166,6 +166,7 @@ export default function Dashboard() {
       throttledFetchDataProjects(); // sync กับ API ใน background
     },
   });
+
   useEffect(() => {
     if (hasFetchedDataRef.current) return;
     hasFetchedDataRef.current = true;
@@ -1019,9 +1020,16 @@ export default function Dashboard() {
                 <h1 className="text-2xl sm:text-3xl font-bold text-white">
                   โครงการทั้งหมด
                 </h1>
-                <p className="text-gray-400 text-sm sm:text-base mt-1">
-                  {status}
-                </p>
+
+                {status === "disconnected" ? (
+                  <span className="inline-flex items-center rounded-md bg-red-400/10 px-2 py-1 text-xs font-medium text-red-400 inset-ring inset-ring-red-500/20">
+                    {status.split(":")[0].toUpperCase()}
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center rounded-md bg-green-400/10 px-2 py-1 text-xs font-medium text-green-400 inset-ring inset-ring-green-500/20">
+                    {status.split(":")[0].toUpperCase()}
+                  </span>
+                )}
               </div>
             </div>
             <button

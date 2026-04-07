@@ -86,10 +86,8 @@ export function usePgtRealtime(opts: UsePgtRealtimeOptions) {
       socket.off("registration.created", onRegistrationCreated);
       socket.off("project.updated", onProjectUpdated);
 
-      // ถ้าต้องการให้ dashboard ออกแล้วตัด socket ทิ้ง:
-      //   socket.disconnect();
-      //
-      // แต่โดยทั่วไป แนะนำไม่ disconnect ถ้าทั้งแอปต้องใช้ realtime ต่อ
+      // ตัด socket ทิ้งเมื่อออกหน้า (เพื่อให้ Reconnect เมื่อกลับมาใหม่)
+      socket.disconnect();
     };
   }, [opts.token, opts.projectId]);
 
