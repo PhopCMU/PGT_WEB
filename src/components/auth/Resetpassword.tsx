@@ -5,13 +5,8 @@ import {
   CheckCircle,
   AlertCircle,
   RefreshCw,
-  Shield,
-  Send,
-  Lock,
-  Fingerprint,
   Database,
   ShieldCheck,
-  Cpu,
 } from "lucide-react";
 import { resetPasswordUser } from "../../services/registrationService";
 
@@ -27,7 +22,6 @@ export const ResetPassword: React.FC<ResetPasswordProps> = ({ onBack }) => {
   const [emailTouched, setEmailTouched] = useState(false);
   const [countdown, setCountdown] = useState(0);
 
-  // Countdown สำหรับการส่งซ้ำ
   useEffect(() => {
     if (countdown > 0) {
       const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
@@ -64,16 +58,15 @@ export const ResetPassword: React.FC<ResetPasswordProps> = ({ onBack }) => {
 
     try {
       const response = await resetPasswordUser(email);
-
       if (response.success) {
         setIsSuccess(true);
-        setCountdown(30); // 30 seconds for next resend
+        setCountdown(30);
       } else {
         setError(response.message);
       }
     } catch (err) {
       setError(
-        "ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ / Unable to connect to server"
+        "ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ / Unable to connect to server",
       );
     } finally {
       setIsLoading(false);
@@ -95,157 +88,72 @@ export const ResetPassword: React.FC<ResetPasswordProps> = ({ onBack }) => {
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-gray-900 via-[#111829] to-[#0d1420] flex items-center justify-center p-4 md:p-6">
-        {/* Animated Background */}
-        <div className="fixed inset-0 overflow-hidden z-0">
-          <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-500/5 rounded-full mix-blend-screen filter blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-purple-500/5 rounded-full mix-blend-screen filter blur-3xl animate-pulse delay-1000"></div>
-        </div>
+      <div className="max-w-lg w-full">
+        <div className="relative bg-white rounded-3xl border border-gray-200 shadow-2xl p-8 transform transition-all duration-300 z-10">
+          <div className="relative mb-8 text-center">
+            <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-emerald-100">
+              <CheckCircle className="text-emerald-500" size={40} />
+            </div>
+            <h2 className="text-2xl font-black text-gray-900 mb-1">
+              ส่งอีเมลสำเร็จ! 🎉
+            </h2>
+            <p className="text-gray-500 font-bold">Email Sent Successfully!</p>
+          </div>
 
-        <div className="relative bg-[#161f2f]/90 backdrop-blur-xl rounded-2xl border border-gray-800/50 shadow-2xl w-full max-w-lg p-6 md:p-8 transform transition-all duration-300 z-10">
-          {/* Decorative corners */}
-          <div className="absolute top-0 left-0 w-3 h-3 border-t border-l border-blue-500/30 rounded-tl-xl"></div>
-          <div className="absolute top-0 right-0 w-3 h-3 border-t border-r border-purple-500/30 rounded-tr-xl"></div>
-          <div className="absolute bottom-0 left-0 w-3 h-3 border-b border-l border-cyan-500/30 rounded-bl-xl"></div>
-          <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-blue-500/30 rounded-br-xl"></div>
+          <div className="bg-blue-50 rounded-2xl p-5 mb-6 border border-blue-100">
+            <div className="flex items-center gap-3 mb-2">
+              <Mail className="text-blue-600" size={20} />
+              <p className="text-sm font-bold text-blue-900">ส่งไปยังอีเมล:</p>
+            </div>
+            <p className="font-black text-blue-700 text-lg break-all">
+              {email}
+            </p>
+          </div>
 
-          {/* Success Animation */}
-          <div className="relative mb-6">
-            <div className="absolute inset-0 animate-ping bg-green-900/20 rounded-full opacity-75"></div>
-            <div className="relative w-20 h-20 bg-linear-to-br from-green-600 to-emerald-700 rounded-full flex items-center justify-center mx-auto shadow-lg border border-emerald-800/50">
-              <CheckCircle className="text-white" size={40} />
+          <div className="bg-amber-50 rounded-2xl p-5 mb-8 border border-amber-100">
+            <div className="flex items-start gap-3">
+              <AlertCircle
+                className="text-amber-600 shrink-0 mt-0.5"
+                size={20}
+              />
+              <div className="text-left">
+                <p className="font-black text-amber-900 text-sm mb-1">
+                  คำแนะนำสำคัญ:
+                </p>
+                <ul className="space-y-1.5 text-sm text-amber-800 font-medium">
+                  <li>📧 กรุณาตรวจสอบอีเมลและคลิกลิงก์</li>
+                  <li>⏱️ ลิงก์มีอายุ 30 นาที</li>
+                  <li>⚠️ หากไม่พบกรุณาดูใน Spam</li>
+                </ul>
+              </div>
             </div>
           </div>
 
-          {/* Success Content */}
-          <div className="text-center">
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
-              ส่งอีเมลสำเร็จ! 🎉
-            </h2>
-            <h3 className="text-lg md:text-xl font-semibold text-gray-300 mb-6">
-              Email Sent Successfully!
-            </h3>
-
-            {/* Email Display Card */}
-            <div className="bg-linear-to-r from-gray-900/50 to-gray-800/50 rounded-xl p-5 mb-6 border border-gray-800/50 backdrop-blur-sm">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 bg-blue-900/20 rounded-lg border border-blue-800/30">
-                  <Mail className="text-blue-400" size={20} />
-                </div>
-                <div className="text-left">
-                  <p className="text-sm text-gray-400 mb-1">ส่งไปยังอีเมล:</p>
-                  <p className="font-semibold text-blue-300 text-lg">{email}</p>
-                </div>
-              </div>
-              <p className="text-gray-400 text-sm">
-                We've sent a password reset link to your email address.
-              </p>
-            </div>
-
-            {/* Instructions */}
-            <div className="bg-linear-to-r from-yellow-900/20 to-amber-900/20 rounded-xl p-5 mb-6 border border-yellow-800/30 backdrop-blur-sm">
-              <div className="flex items-start gap-3">
-                <div className="p-2 bg-yellow-900/30 rounded-lg border border-yellow-800/30 mt-0.5">
-                  <AlertCircle className="text-yellow-400" size={20} />
-                </div>
-                <div className="text-left">
-                  <p className="font-medium text-yellow-300 mb-2">
-                    คำแนะนำสำคัญ:
-                  </p>
-                  <ul className="space-y-2 text-sm text-yellow-200">
-                    <li className="flex items-start gap-2">
-                      <span className="mt-0.5">📧</span>
-                      <span>
-                        กรุณาตรวจสอบอีเมลของคุณและคลิกลิงก์เพื่อรีเซ็ตรหัสผ่าน
-                      </span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="mt-0.5">⏱️</span>
-                      <span>ลิงก์จะมีอายุการใช้งาน 30 นาที</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="mt-0.5">⚠️</span>
-                      <span>หากไม่พบอีเมล กรุณาตรวจสอบในกล่องสแปม (Spam)</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            {/* Security Info */}
-            <div className="flex items-center justify-center gap-4 mb-6">
-              <div className="flex items-center gap-2">
-                <Lock className="w-3 h-3 text-green-400" />
-                <span className="text-xs text-gray-500">Encrypted Link</span>
-              </div>
-              <div className="w-1 h-1 bg-gray-700 rounded-full"></div>
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="w-3 h-3 text-blue-400" />
-                <span className="text-xs text-gray-500">Secure</span>
-              </div>
-              <div className="w-1 h-1 bg-gray-700 rounded-full"></div>
-              <div className="flex items-center gap-2">
-                <Cpu className="w-3 h-3 text-purple-400" />
-                <span className="text-xs text-gray-500">Verified</span>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="space-y-4">
-              <button
-                onClick={handleResend}
-                disabled={countdown > 0}
-                className="w-full relative group overflow-hidden"
-              >
-                {/* Background */}
-                <div
-                  className={`absolute inset-0 bg-linear-to-r rounded-xl transition-all duration-300 ${
-                    countdown > 0
-                      ? "from-gray-800 to-gray-900"
-                      : "from-blue-600 to-purple-600 group-hover:from-blue-700 group-hover:to-purple-700"
-                  }`}
-                ></div>
-
-                {/* Shine effect */}
-                <div className="absolute inset-0 overflow-hidden rounded-xl">
-                  <div className="absolute -inset-100% bg-linear-to-r from-transparent via-white/10 to-transparent translate-x-full group-hover:translate-x-0 transition-transform duration-700"></div>
-                </div>
-
-                <div
-                  className={`relative py-3 px-6 rounded-xl font-medium flex items-center justify-center gap-3 transition-transform group-hover:-translate-y-0.5 ${
-                    countdown > 0 ? "text-gray-400" : "text-white"
-                  }`}
-                >
-                  {countdown > 0 ? (
-                    <>
-                      <RefreshCw className="animate-spin" size={20} />
-                      <span>ส่งอีกครั้งได้ใน {countdown} วินาที</span>
-                    </>
-                  ) : (
-                    <>
-                      <Send
-                        size={20}
-                        className="group-hover:scale-110 transition-transform"
-                      />
-                      <span>ส่งอีเมลอีกครั้ง / Resend Email</span>
-                    </>
-                  )}
-                </div>
-              </button>
-
-              {onBack && (
-                <button
-                  onClick={onBack}
-                  className="w-full text-gray-400 hover:text-gray-300 py-3 transition-colors font-medium flex items-center justify-center gap-2 hover:gap-3 group border border-gray-800/50 rounded-xl hover:bg-gray-900/30"
-                >
-                  <ArrowLeft
-                    size={18}
-                    className="group-hover:-translate-x-1 transition-transform"
-                  />
-                  กลับไปหน้าเข้าสู่ระบบ / Back to Login
-                </button>
+          <div className="space-y-4">
+            <button
+              onClick={handleResend}
+              disabled={countdown > 0}
+              className="w-full py-4 bg-linear-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-bold shadow-lg shadow-blue-500/20 active:scale-95 transition-all disabled:opacity-50"
+            >
+              {countdown > 0 ? (
+                <span className="flex items-center justify-center gap-2">
+                  <RefreshCw className="animate-spin" size={20} />
+                  ส่งใหม่ได้ใน {countdown} วินาที
+                </span>
+              ) : (
+                "ส่งอีเมลอีกครั้ง / Resend Email"
               )}
-            </div>
+            </button>
+
+            {onBack && (
+              <button
+                onClick={onBack}
+                className="w-full text-gray-500 hover:text-gray-900 py-3 font-bold transition-colors flex items-center justify-center gap-2"
+              >
+                <ArrowLeft size={18} />
+                กลับหน้าเข้าสู่ระบบ
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -253,237 +161,113 @@ export const ResetPassword: React.FC<ResetPasswordProps> = ({ onBack }) => {
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-900 via-[#111829] to-[#0d1420] flex items-center justify-center p-4 md:p-6">
-      {/* Animated Background */}
-      <div className="fixed inset-0 overflow-hidden z-0">
-        {/* Floating particles */}
-        {[...Array(8)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-1 h-1 bg-blue-400/20 rounded-full animate-float"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 2}s`,
-              animationDuration: `${4 + Math.random() * 6}s`,
-            }}
-          />
-        ))}
-
-        {/* linear orbs */}
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-500/5 rounded-full mix-blend-screen filter blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-purple-500/5 rounded-full mix-blend-screen filter blur-3xl animate-pulse delay-1000"></div>
-      </div>
-
-      <div className="relative bg-[#161f2f]/90 backdrop-blur-xl rounded-2xl border border-gray-800/50 shadow-2xl w-full max-w-lg p-6 md:p-8 transform transition-all duration-300 z-10">
-        {/* Decorative corners */}
-        <div className="absolute top-0 left-0 w-3 h-3 border-t border-l border-blue-500/30 rounded-tl-xl"></div>
-        <div className="absolute top-0 right-0 w-3 h-3 border-t border-r border-purple-500/30 rounded-tr-xl"></div>
-        <div className="absolute bottom-0 left-0 w-3 h-3 border-b border-l border-cyan-500/30 rounded-bl-xl"></div>
-        <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-blue-500/30 rounded-br-xl"></div>
-
-        {/* Header */}
+    <div className="max-w-lg w-full">
+      <div className="relative bg-white rounded-3xl border border-gray-200 shadow-2xl p-8 transform transition-all duration-300 z-10">
         <div className="text-center mb-8">
-          <div className="relative inline-block mb-6">
-            <div className="absolute inset-0 animate-ping bg-blue-900/20 rounded-full opacity-75"></div>
-            <div className="relative w-20 h-20 bg-linear-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto shadow-lg border border-blue-800/50">
-              <Mail className="text-white" size={36} />
-            </div>
+          <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-100">
+            <Mail className="text-blue-600" size={36} />
           </div>
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+          <h2 className="text-2xl font-black text-gray-900 mb-1">
             รีเซ็ตรหัสผ่าน 🔐
           </h2>
-          <h3 className="text-lg md:text-xl font-semibold text-gray-300 mb-3">
-            Reset Password
-          </h3>
-          <div className="flex items-center justify-center gap-2 text-gray-400 text-sm">
-            <Shield size={16} className="text-blue-400" />
-            <p>กรุณากรอกอีเมลที่ใช้ในการลงทะเบียน</p>
-          </div>
-          <p className="text-gray-500 text-xs md:text-sm mt-1">
-            Please enter your registered email address
-          </p>
+          <h3 className="text-lg font-bold text-gray-400">Reset Password</h3>
         </div>
 
-        {/* Form */}
         <div className="space-y-6">
-          {/* Error Message */}
           {error && (
-            <div className="animate-slideIn bg-linear-to-r from-red-900/20 to-pink-900/20 border border-red-800/50 rounded-xl p-4 flex items-start gap-3 backdrop-blur-sm">
-              <div className="p-2 bg-red-900/30 rounded-lg border border-red-800/30 shrink-0">
-                <AlertCircle className="text-red-400" size={20} />
-              </div>
-              <div>
-                <p className="font-medium text-red-300 mb-1">เกิดข้อผิดพลาด</p>
-                <p className="text-sm text-red-200">{error}</p>
-              </div>
+            <div className="bg-red-50 border border-red-100 rounded-xl p-4 flex items-start gap-3">
+              <AlertCircle className="text-red-600 shrink-0 mt-0.5" size={20} />
+              <p className="text-sm font-bold text-red-900">{error}</p>
             </div>
           )}
 
-          {/* Email Input */}
           <div>
-            <label
-              htmlFor="email"
-              className=" text-sm font-medium text-gray-300 mb-2 flex items-center gap-2"
-            >
-              <Mail size={16} className="text-blue-400" />
-              อีเมล / Email <span className="text-red-400">*</span>
+            <label className="text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
+              <Mail size={16} className="text-blue-600" />
+              อีเมล / Email
             </label>
-            <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Mail
-                  className={`
-                    ${
-                      getEmailValidationState() === "valid"
-                        ? "text-green-400"
-                        : getEmailValidationState() === "invalid"
-                        ? "text-red-400"
-                        : "text-gray-500"
-                    } transition-colors
-                  `}
-                  size={20}
-                />
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                <Mail size={20} />
               </div>
               <input
                 type="email"
-                id="email"
                 value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  if (emailTouched) setEmailTouched(true);
-                }}
+                onChange={(e) => setEmail(e.target.value)}
                 onKeyPress={handleKeyPress}
                 onBlur={() => setEmailTouched(true)}
-                className={`w-full pl-10 pr-10 py-3 border rounded-xl focus:ring-2 outline-none transition-all duration-300 placeholder:text-gray-500 backdrop-blur-sm
-                  ${
-                    getEmailValidationState() === "valid"
-                      ? "border-green-700/50 focus:ring-green-500/20 focus:border-green-500"
-                      : getEmailValidationState() === "invalid"
-                      ? "border-red-700/50 focus:ring-red-500/20 focus:border-red-500"
-                      : "border-gray-700 focus:ring-blue-500/20 focus:border-blue-500"
-                  }
-                  ${isLoading ? "bg-gray-900/50" : "bg-gray-900/30"}
-                  text-gray-300
-                `}
+                className={`w-full pl-10 pr-4 py-3.5 bg-gray-50 border-2 rounded-xl focus:ring-4 outline-none transition-all font-medium ${
+                  emailTouched && email && !validateEmail(email)
+                    ? "border-red-200 focus:ring-red-500/10"
+                    : "border-gray-100 focus:ring-blue-500/10 focus:border-blue-500"
+                }`}
                 placeholder="example@cmu.ac.th"
                 disabled={isLoading}
               />
-
-              {/* Validation Indicator */}
-              {emailTouched && email && (
-                <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                  {getEmailValidationState() === "valid" ? (
-                    <CheckCircle
-                      className="text-green-400 animate-scaleIn"
-                      size={20}
-                    />
-                  ) : getEmailValidationState() === "invalid" ? (
-                    <AlertCircle
-                      className="text-red-400 animate-scaleIn"
-                      size={20}
-                    />
-                  ) : null}
-                </div>
-              )}
             </div>
-
-            {/* Validation Hint */}
-            {emailTouched && getEmailValidationState() === "invalid" && (
-              <p className="mt-2 text-xs text-red-400 flex items-center gap-1">
-                <AlertCircle size={12} />
-                กรุณากรอกอีเมลให้ถูกต้อง (เช่น example@cmu.ac.th)
-              </p>
-            )}
           </div>
 
-          {/* Submit Button */}
+          {/* Validation Indicator */}
+          {emailTouched && email && (
+            <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+              {getEmailValidationState() === "valid" ? (
+                <CheckCircle
+                  className="text-green-400 animate-scaleIn"
+                  size={20}
+                />
+              ) : getEmailValidationState() === "invalid" ? (
+                <AlertCircle
+                  className="text-red-400 animate-scaleIn"
+                  size={20}
+                />
+              ) : null}
+            </div>
+          )}
+
+          {/* Validation Hint */}
+          {emailTouched && getEmailValidationState() === "invalid" && (
+            <p className="mt-2 text-xs text-red-400 flex items-center gap-1">
+              <AlertCircle size={12} />
+              กรุณากรอกอีเมลให้ถูกต้อง (เช่น example@cmu.ac.th)
+            </p>
+          )}
+
           <button
             onClick={handleSubmit}
-            disabled={isLoading}
-            className="w-full relative group overflow-hidden"
+            disabled={isLoading || !email}
+            className="w-full py-4 bg-linear-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-bold shadow-lg shadow-blue-500/20 active:scale-95 transition-all disabled:opacity-50"
           >
-            {/* Background */}
-            <div
-              className={`absolute inset-0 bg-linear-to-r rounded-xl transition-all duration-300 ${
-                isLoading
-                  ? "from-gray-800 to-gray-900"
-                  : "from-blue-600 to-purple-600 group-hover:from-blue-700 group-hover:to-purple-700"
-              }`}
-            ></div>
-
-            {/* Shine effect */}
-            <div className="absolute inset-0 overflow-hidden rounded-xl">
-              <div className="absolute -inset-100% bg-linear-to-r from-transparent via-white/10 to-transparent translate-x-full group-hover:translate-x-0 transition-transform duration-700"></div>
-            </div>
-
-            <div
-              className={`relative py-3 px-6 rounded-xl font-medium flex items-center justify-center gap-3 transition-transform group-hover:-translate-y-0.5 active:scale-95 ${
-                isLoading ? "text-gray-400" : "text-white"
-              }`}
-            >
-              {isLoading ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span className="animate-pulse">
-                    กำลังส่ง... / Sending...
-                  </span>
-                </>
-              ) : (
-                <>
-                  <Send
-                    size={20}
-                    className="group-hover:scale-110 transition-transform"
-                  />
-                  <span>ส่งลิงก์รีเซ็ตรหัสผ่าน / Send Reset Link</span>
-                </>
-              )}
-            </div>
+            {isLoading ? (
+              <RefreshCw className="animate-spin mx-auto" size={24} />
+            ) : (
+              "ส่งลิงก์รีเซ็ตรหัสผ่าน / Send Reset Link"
+            )}
           </button>
 
-          {/* Security Indicators */}
-          <div className="flex items-center justify-center gap-4">
-            <div className="w-1 h-1 bg-gray-700 rounded-full"></div>
-            <div className="flex items-center gap-2">
-              <Fingerprint className="w-3 h-3 text-purple-400" />
-              <span className="text-xs text-gray-500">Secure Auth</span>
-            </div>
-            <div className="w-1 h-1 bg-gray-700 rounded-full"></div>
-            <div className="flex items-center gap-2">
-              <Database className="w-3 h-3 text-green-400" />
-              <span className="text-xs text-gray-500">PDPA</span>
-            </div>
-          </div>
-
-          {/* Back to Login */}
           {onBack && (
             <button
               onClick={onBack}
-              className="w-full text-gray-400 hover:text-gray-300 py-3 transition-colors font-medium flex items-center justify-center gap-2 hover:gap-3 group border border-gray-800/50 rounded-xl hover:bg-gray-900/30"
+              className="w-full text-gray-500 hover:text-gray-900 py-3 font-bold transition-colors flex items-center justify-center gap-2"
             >
-              <ArrowLeft
-                size={18}
-                className="group-hover:-translate-x-1 transition-transform"
-              />
-              กลับไปหน้าเข้าสู่ระบบ / Back to Login
+              <ArrowLeft size={18} />
+              กลับหน้าเข้าสู่ระบบ
             </button>
           )}
         </div>
 
-        {/* Footer Note */}
-        <div className="mt-8 pt-6 border-t border-gray-800/50">
-          <div className="flex items-start gap-3">
-            <div className="p-2 bg-gray-900/30 rounded-lg border border-gray-800/30 shrink-0">
-              <AlertCircle className="text-gray-500" size={16} />
+        <div className="mt-8 pt-6 border-t border-gray-100">
+          <div className="flex justify-center gap-6">
+            <div className="flex items-center gap-1.5">
+              <ShieldCheck className="w-4 h-4 text-emerald-500" />
+              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                Secure
+              </span>
             </div>
-            <div className="text-left">
-              <p className="text-xs text-gray-400 mb-1">
-                หากคุณไม่ได้ลงทะเบียนหรือลืมอีเมลที่ใช้ กรุณาติดต่อเจ้าหน้าที่
-                053-948-095
-              </p>
-              <p className="text-xs text-gray-500">
-                If you haven't registered or forgot your email, please contact
-                the administrator. 053-948-095
-              </p>
+            <div className="flex items-center gap-1.5">
+              <Database className="w-4 h-4 text-blue-500" />
+              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                PDPA
+              </span>
             </div>
           </div>
         </div>

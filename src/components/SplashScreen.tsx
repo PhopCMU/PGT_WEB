@@ -20,7 +20,6 @@ export default function SplashScreen({
       setShow(false);
       onHidden?.();
 
-      // เรียกฟังก์ชันใน global scope เพื่อซ่อนใน index.html
       if (typeof window !== "undefined" && (window as any).hideSplashScreen) {
         (window as any).hideSplashScreen();
       }
@@ -39,7 +38,7 @@ export default function SplashScreen({
         left: 0,
         width: "100%",
         height: "100%",
-        backgroundColor: "#0f172a",
+        backgroundColor: "#ffffff",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
@@ -71,8 +70,8 @@ export default function SplashScreen({
         style={{
           width: "40px",
           height: "40px",
-          border: "4px solid rgba(255, 255, 255, 0.3)",
-          borderTop: "4px solid #ffffff",
+          border: "4px solid rgba(59, 130, 246, 0.1)",
+          borderTop: "4px solid #2563eb",
           borderRadius: "50%",
           animation: "spin 1s linear infinite",
           marginBottom: "20px",
@@ -81,21 +80,23 @@ export default function SplashScreen({
 
       <div
         style={{
-          color: "#ffffff",
-          fontSize: "16px",
-          opacity: 0.8,
+          color: "#1e293b",
+          fontSize: "14px",
+          fontWeight: "900",
+          letterSpacing: "0.1em",
+          textTransform: "uppercase",
+          opacity: 0.6,
           textAlign: "center",
-          fontFamily:
-            '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
+          fontFamily: "Inter, sans-serif",
         }}
       >
-        กำลังโหลดแอปพลิเคชัน...
+        กำลังโหลดระบบ...
       </div>
 
       <style>{`
         @keyframes pulse {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.05); }
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.05); opacity: 0.8; }
         }
 
         @keyframes spin {

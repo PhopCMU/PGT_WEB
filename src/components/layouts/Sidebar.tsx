@@ -3,7 +3,6 @@ import {
   User,
   Calendar,
   LogOut,
-  ChevronRight,
   Command,
   DatabaseBackupIcon,
 } from "lucide-react";
@@ -12,7 +11,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
-  user?: any; // อนุญาตให้เป็น undefined หรือ null
+  user?: any;
 }
 
 const Sidebar = ({ isOpen, onClose, user }: SidebarProps) => {
@@ -20,7 +19,7 @@ const Sidebar = ({ isOpen, onClose, user }: SidebarProps) => {
   const navigate = useNavigate();
 
   const baseMenuItems = [
-    { icon: Home, label: "โครงการสัมมนา", path: "/dashboard" }, // แก้ path
+    { icon: Home, label: "โครงการสัมมนา", path: "/dashboard" },
     {
       icon: DatabaseBackupIcon,
       label: "โปรเจคที่สมัคร",
@@ -31,7 +30,7 @@ const Sidebar = ({ isOpen, onClose, user }: SidebarProps) => {
       icon: User,
       label: "โปรไฟล์",
       path: "/profile",
-      showIf: (u: any) => !!u?.role, // ปลอดภัย
+      showIf: (u: any) => !!u?.role,
     },
   ];
 
@@ -40,17 +39,16 @@ const Sidebar = ({ isOpen, onClose, user }: SidebarProps) => {
       icon: LogOut,
       label: "ออกจากระบบ",
       path: "/logout",
-      showIf: (u: any) => !!u?.role, // ปลอดภัย
+      showIf: (u: any) => !!u?.role,
     },
   ];
 
-  // กรองเมนูให้แสดงเฉพาะที่ผ่านเงื่อนไข
   const visibleMenuItems = baseMenuItems.filter(
-    (item) => !item.showIf || item.showIf(user)
+    (item) => !item.showIf || item.showIf(user),
   );
 
   const visibleBottomItems = bottomItems.filter(
-    (item) => !item.showIf || item.showIf(user)
+    (item) => !item.showIf || item.showIf(user),
   );
 
   const isActive = (path: string) => {
@@ -70,7 +68,7 @@ const Sidebar = ({ isOpen, onClose, user }: SidebarProps) => {
       {/* Overlay สำหรับมือถือ */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-1500 lg:hidden animate-fadeIn"
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-1500 lg:hidden animate-fadeIn"
           onClick={onClose}
         />
       )}
@@ -79,44 +77,38 @@ const Sidebar = ({ isOpen, onClose, user }: SidebarProps) => {
       <div className="relative">
         <aside
           className={`
-            fixed top-0 left-0 h-screen bg-linear-to-b from-gray-900 to-gray-800 
-            text-white  transition-all duration-300 ease-in-out
-            w-72 shadow-2xl border-r border-gray-700/50 flex flex-col
+            fixed top-0 left-0 h-screen bg-white 
+            transition-all duration-300 ease-in-out
+            w-72 shadow-xl border-r border-gray-100 flex flex-col
             ${isOpen ? "translate-x-0 z-9999" : "-translate-x-full z-50"}
             lg:translate-x-0 lg:w-72 lg:h-screen lg:sticky lg:top-0
           `}
         >
-          {/* Close Button - แสดงเฉพาะมือถือ */}
-          <button
-            onClick={onClose}
-            className="lg:hidden absolute top-6 right-4 p-2 hover:bg-gray-700/50 rounded-lg transition-colors z-10"
-          >
-            <X className="w-5 h-5 text-gray-400" />
-          </button>
-
           {/* Logo/Header */}
-          <div className="px-6 pt-6 pb-4 lg:hidden">
+          <div className="px-6 py-8">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                <Calendar className="w-6 h-6" />
+              <div className="w-10 h-10 rounded-xl bg-linear-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                <Calendar className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                <h1 className="text-xl font-black text-gray-900 leading-tight">
                   PGT CMU
                 </h1>
-                <p className="text-xs text-gray-400">ระบบโครงการสัมมนา</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-blue-600">
+                  Graduate Studies
+                </p>
               </div>
             </div>
           </div>
 
           {/* Navigation Menu */}
-          <div className="flex-1 overflow-y-auto py-4 sidebar-scrollbar lg:pt-10">
-            <nav className="px-4">
-              <div className="mb-6">
-                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-4 mb-3">
-                  เมนูหลัก
+          <div className="flex-1 overflow-y-auto py-4 sidebar-scrollbar">
+            <nav className="px-4 space-y-8">
+              <div>
+                <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] px-4 mb-4">
+                  Main Menu
                 </h3>
-                <ul className="space-y-1">
+                <ul className="space-y-1.5">
                   {visibleMenuItems.map((item, index) => {
                     const Icon = item.icon;
                     const active = isActive(item.path);
@@ -127,30 +119,30 @@ const Sidebar = ({ isOpen, onClose, user }: SidebarProps) => {
                           to={item.path}
                           onClick={onClose}
                           className={`
-                            flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200
+                            flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 group
                             ${
                               active
-                                ? "bg-linear-to-r from-blue-500/20 to-purple-500/20 text-white border-l-4 border-blue-500"
-                                : "text-gray-300 hover:bg-gray-800/50 hover:text-white"
+                                ? "bg-blue-50 text-blue-700 shadow-sm border border-blue-100"
+                                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                             }
                           `}
                         >
                           <div className="flex items-center gap-3">
                             <Icon
-                              className={`w-5 h-5 ${
-                                active ? "text-blue-400" : "text-gray-400"
+                              className={`w-5 h-5 transition-transform group-hover:scale-110 ${
+                                active ? "text-blue-600" : "text-gray-400"
                               }`}
                             />
                             <span
-                              className={`font-medium ${
-                                active ? "font-semibold" : ""
+                              className={`text-sm font-bold ${
+                                active ? "font-black" : ""
                               }`}
                             >
                               {item.label}
                             </span>
                           </div>
                           {active && (
-                            <ChevronRight className="w-4 h-4 text-blue-400" />
+                            <div className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></div>
                           )}
                         </Link>
                       </li>
@@ -158,98 +150,50 @@ const Sidebar = ({ isOpen, onClose, user }: SidebarProps) => {
                   })}
                 </ul>
               </div>
+
               {!user?.role && (
-                <div className="relative overflow-hidden rounded-2xl border border-amber-200/50 bg-linear-to-r from-amber-50/80 to-yellow-50/80 p-4 backdrop-blur-sm">
-                  {/* Decorative elements */}
-                  <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2">
-                    <div className="w-24 h-24 bg-amber-200/20 rounded-full blur-xl"></div>
-                  </div>
-                  <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2">
-                    <div className="w-20 h-20 bg-yellow-200/20 rounded-full blur-xl"></div>
-                  </div>
-
-                  <div className="relative">
-                    {/* Header with icon */}
-                    <div className="flex items-start gap-3 mb-3">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h4 className="font-bold text-amber-900 text-sm flex items-center gap-1">
-                            <Command className="w-4 h-4 text-amber-950" />
-                            ขั้นตอนการใช้งาน
-                          </h4>
-                          <span className="px-2 py-0.5 bg-amber-100 text-amber-800 text-xs font-medium rounded-full">
-                            สำคัญ
-                          </span>
-                        </div>
-                        <p className="text-amber-800 text-sm leading-relaxed">
-                          เพื่อการสมัครเข้าร่วมโครงการสัมมนาและชำระเงินค่าเข้าร่วมโครงการ
-                          กรุณาดำเนินการตามขั้นตอนดังนี้
-                        </p>
+                <div className="relative overflow-hidden rounded-2xl border border-amber-100 bg-amber-50 p-5">
+                  <div className="relative z-10 space-y-4">
+                    <div className="flex items-center gap-2">
+                      <div className="p-1.5 rounded-lg bg-amber-100">
+                        <Command className="w-4 h-4 text-amber-700" />
                       </div>
+                      <h4 className="font-black text-amber-900 text-sm">
+                        ขั้นตอนการใช้งาน
+                      </h4>
                     </div>
 
-                    {/* Steps */}
-                    <div className="space-y-2.5 ml-4">
-                      {/* Step 1 */}
-                      <div className="flex items-center gap-2">
-                        <div className="shrink-0 w-5 h-5 rounded-full bg-white border-2 border-amber-500 flex items-center justify-center">
-                          <span className="text-amber-600 font-bold text-xs">
-                            1
+                    <div className="space-y-3">
+                      {[1, 2, 3, 4].map((step) => (
+                        <div key={step} className="flex items-center gap-3">
+                          <div className="shrink-0 w-5 h-5 rounded-full bg-white border border-amber-200 flex items-center justify-center shadow-sm">
+                            <span className="text-amber-700 font-black text-[10px]">
+                              {step}
+                            </span>
+                          </div>
+                          <span className="text-amber-800 font-bold text-xs">
+                            {step === 1
+                              ? "สมัครสมาชิก"
+                              : step === 2
+                                ? "เข้าสู่ระบบ"
+                                : step === 3
+                                  ? "สมัครโครงการ"
+                                  : "ชำระเงิน"}
                           </span>
                         </div>
-                        <span className="text-amber-700 font-medium text-sm">
-                          สมัครสมาชิก
-                        </span>
-                      </div>
-
-                      {/* Step 2 */}
-                      <div className="flex items-center gap-2">
-                        <div className="shrink-0 w-5 h-5 rounded-full bg-white border-2 border-amber-500 flex items-center justify-center">
-                          <span className="text-amber-600 font-bold text-xs">
-                            2
-                          </span>
-                        </div>
-                        <span className="text-amber-700 font-medium text-sm">
-                          เข้าสู่ระบบ
-                        </span>
-                      </div>
-
-                      {/* Step 3 */}
-                      <div className="flex items-center gap-2">
-                        <div className="shrink-0 w-5 h-5 rounded-full bg-white border-2 border-amber-500 flex items-center justify-center">
-                          <span className="text-amber-600 font-bold text-xs">
-                            3
-                          </span>
-                        </div>
-                        <span className="text-amber-700 font-medium text-sm">
-                          สมัครโครงการสัมมนา
-                        </span>
-                      </div>
-
-                      {/* Step 4 */}
-                      <div className="flex items-center gap-2">
-                        <div className="shrink-0 w-5 h-5 rounded-full bg-white border-2 border-amber-500 flex items-center justify-center">
-                          <span className="text-amber-600 font-bold text-xs">
-                            4
-                          </span>
-                        </div>
-                        <span className="text-amber-700 font-medium text-sm">
-                          ชำระเงิน
-                        </span>
-                      </div>
+                      ))}
                     </div>
 
-                    {/* CTA Button */}
-                    <div className="mt-4 flex gap-2">
+                    <div className="flex flex-col gap-2 pt-2">
                       <button
                         onClick={() => navigate("/register")}
-                        className="flex-1 px-4 py-2.5 bg-linear-to-r text-[11px] from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold text-sm rounded-xl transition-all duration-200 shadow-sm hover:shadow-md active:scale-95"
+                        className="w-full py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-black text-xs rounded-xl transition-all shadow-lg shadow-amber-600/20"
                       >
                         สมัครสมาชิก
                       </button>
                       <button
                         onClick={() => navigate("/sign-in")}
-                        className="flex-1 px-4 py-2.5 text-[11px] bg-white border border-amber-300 hover:border-amber-400 text-amber-700 font-semibold text-sm rounded-xl transition-all duration-200 shadow-sm hover:shadow-md active:scale-95"
+                        className="w-full py-2.5 bg-white border border-amber-200 text-amber-700 font-black text-xs rounded-xl hover:bg-amber-50 transition-all"
                       >
                         เข้าสู่ระบบ
                       </button>
@@ -258,13 +202,12 @@ const Sidebar = ({ isOpen, onClose, user }: SidebarProps) => {
                 </div>
               )}
 
-              {/* Bottom Menu (เฉพาะผู้ใช้ที่ login) */}
               {visibleBottomItems.length > 0 && (
                 <div>
-                  <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-4 mb-3">
-                    {hasRole ? "เมนูอื่นๆ" : ""}
+                  <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] px-4 mb-4">
+                    Other Menu
                   </h3>
-                  <ul className="space-y-1">
+                  <ul className="space-y-1.5">
                     {visibleBottomItems.map((item, index) => {
                       const Icon = item.icon;
                       const isLogout = item.path === "/logout";
@@ -274,12 +217,12 @@ const Sidebar = ({ isOpen, onClose, user }: SidebarProps) => {
                           {isLogout ? (
                             <button
                               onClick={handleLogout}
-                              className="flex items-center justify-between w-full px-4 py-3 rounded-xl text-gray-300 
-                                hover:bg-red-500/10 hover:text-red-400 transition-all duration-200"
+                              className="flex items-center justify-between w-full px-4 py-3 rounded-xl text-gray-600 
+                                hover:bg-red-50 hover:text-red-600 transition-all duration-200 group"
                             >
                               <div className="flex items-center gap-3">
-                                <Icon className="w-5 h-5" />
-                                <span className="font-medium">
+                                <Icon className="w-5 h-5 text-gray-400 group-hover:text-red-500 transition-colors" />
+                                <span className="text-sm font-bold">
                                   {item.label}
                                 </span>
                               </div>
@@ -288,12 +231,12 @@ const Sidebar = ({ isOpen, onClose, user }: SidebarProps) => {
                             <Link
                               to={item.path}
                               onClick={onClose}
-                              className="flex items-center justify-between px-4 py-3 rounded-xl text-gray-300 
-                                hover:bg-gray-800/50 hover:text-white transition-all duration-200"
+                              className="flex items-center justify-between px-4 py-3 rounded-xl text-gray-600 
+                                hover:bg-gray-50 hover:text-gray-900 transition-all duration-200"
                             >
                               <div className="flex items-center gap-3">
-                                <Icon className="w-5 h-5" />
-                                <span className="font-medium">
+                                <Icon className="w-5 h-5 text-gray-400" />
+                                <span className="text-sm font-bold">
                                   {item.label}
                                 </span>
                               </div>
@@ -309,28 +252,27 @@ const Sidebar = ({ isOpen, onClose, user }: SidebarProps) => {
           </div>
 
           {/* Footer */}
-          <div className="border-t border-gray-700/50 p-4 bg-gray-900/50">
-            <div className="px-4 py-3 bg-gray-800/30 backdrop-blur-sm rounded-xl">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-gray-400">สถานะระบบ</span>
+          <div className="p-4 border-t border-gray-50">
+            <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                  System Status
+                </span>
                 {hasRole ? (
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                    <span className="text-xs text-emerald-400">
-                      ใช้งานได้ปกติ
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
+                    <span className="text-[10px] font-black text-emerald-600 uppercase">
+                      Online
                     </span>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
-                    <span className="text-xs text-red-400">
-                      ไม่สามารถใช้งานได้
-                    </span>
-                  </div>
+                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                    Guest Mode
+                  </span>
                 )}
               </div>
-              <div className="text-xs text-gray-500 mt-1">
-                Version {__APP_VERSION__}
+              <div className="text-[10px] font-black text-gray-400">
+                VER {__APP_VERSION__}
               </div>
             </div>
           </div>
@@ -339,22 +281,5 @@ const Sidebar = ({ isOpen, onClose, user }: SidebarProps) => {
     </>
   );
 };
-
-// Icon X สำหรับปิด sidebar
-const X = ({ className }: { className?: string }) => (
-  <svg
-    className={className}
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M6 18L18 6M6 6l12 12"
-    />
-  </svg>
-);
 
 export default Sidebar;

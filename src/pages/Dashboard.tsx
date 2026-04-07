@@ -246,8 +246,8 @@ export default function Dashboard() {
         allowOutsideClick: false,
         allowEscapeKey: false,
         showConfirmButton: false,
-        background: "#111827",
-        color: "#e2e8f0",
+        background: "#ffffff",
+        color: "#1f2937",
         didOpen: () => {
           Swal.showLoading();
         },
@@ -265,8 +265,8 @@ export default function Dashboard() {
             icon: "error",
             title: "ไฟล์ไม่ถูกต้อง",
             text: "Invalid file",
-            background: "#111827",
-            color: "#e2e8f0",
+            background: "#ffffff",
+            color: "#1f2937",
             confirmButtonColor: "#3b82f6",
             confirmButtonText: "ลองอีกครั้ง",
           });
@@ -295,8 +295,8 @@ export default function Dashboard() {
             icon: "error",
             title: "สมัครไม่สำเร็จ",
             text: response?.message?.mgs || "Registration failed",
-            background: "#111827",
-            color: "#e2e8f0",
+            background: "#ffffff",
+            color: "#1f2937",
             confirmButtonColor: "#3b82f6",
             confirmButtonText: "ลองอีกครั้ง",
           });
@@ -309,16 +309,16 @@ export default function Dashboard() {
         Swal.fire({
           icon: "success",
           title: "ลงทะเบียนสำเร็จ!",
-          html: "<span style='color:#94a3b8'>ระบบได้รับการสมัครของคุณแล้ว</span>",
-          background: "#111827",
-          color: "#e2e8f0",
+          html: "<span style='color:#6b7280'>ระบบได้รับการสมัครของคุณแล้ว</span>",
+          background: "#ffffff",
+          color: "#1f2937",
           timer: 5000,
           timerProgressBar: true,
           confirmButtonColor: "#10b981",
           confirmButtonText: "ดูโปรเจคที่สมัคร",
           showCancelButton: true,
           cancelButtonText: "ปิด",
-          cancelButtonColor: "#374151",
+          cancelButtonColor: "#9ca3af",
         }).then((result) => {
           setSlipPayment(null);
           setSelectedType(null);
@@ -333,8 +333,8 @@ export default function Dashboard() {
           icon: "error",
           title: "เกิดข้อผิดพลาด",
           text: "เกิดข้อผิดพลาดในการสมัคร กรุณาลองอีกครั้ง",
-          background: "#111827",
-          color: "#e2e8f0",
+          background: "#ffffff",
+          color: "#1f2937",
           confirmButtonColor: "#3b82f6",
           confirmButtonText: "ลองอีกครั้ง",
         });
@@ -393,10 +393,9 @@ export default function Dashboard() {
     };
 
     return (
-      <div className="group relative  rounded-2xl border border-gray-800 overflow-hidden hover:border-blue-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10">
+      <div className="group relative bg-white rounded-3xl border border-gray-200 overflow-hidden hover:border-blue-400/50 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/5">
         {/* Decorative Elements */}
         <div className="absolute top-0 right-0 w-20 h-20 bg-linear-to-bl from-blue-500/5 to-purple-500/5 rounded-tr-2xl" />
-        <div className="absolute -top-10 -left-10 w-20 h-20 bg-blue-500/5 rounded-full blur-xl" />
 
         <div className="relative overflow-hidden rounded-t-2xl">
           <A4Container>
@@ -411,25 +410,25 @@ export default function Dashboard() {
                 e.currentTarget.className += " opacity-50";
               }}
             />
-            <div className="absolute inset-0 bg-linear-to-t from-black/70 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
           </A4Container>
 
           {/* Status Badges */}
           <div className="absolute top-4 left-4 flex flex-col gap-2">
             {soldOut && (
-              <div className="inline-flex items-center gap-2 bg-linear-to-r from-red-900/80 to-rose-900/80 backdrop-blur-sm text-red-200 text-xs font-bold px-3 py-2 rounded-full border border-red-800/50">
+              <div className="inline-flex items-center gap-2 bg-red-600 backdrop-blur-sm text-white text-xs font-bold px-3 py-2 rounded-full border border-red-500 shadow-sm">
                 <AlertCircle size={12} />
                 SOLD OUT
               </div>
             )}
             {!soldOut && closingSoon && (
-              <div className="inline-flex items-center gap-2 bg-linear-to-r from-amber-900/80 to-orange-900/80 backdrop-blur-sm text-amber-200 text-xs font-bold px-3 py-2 rounded-full border border-amber-800/50 animate-pulse">
+              <div className="inline-flex items-center gap-2 bg-amber-500 backdrop-blur-sm text-white text-xs font-bold px-3 py-2 rounded-full border border-amber-400 shadow-sm animate-pulse">
                 <Clock size={12} />
                 กำลังจะปิด!
               </div>
             )}
             {earlyBadge && open && !soldOut && (
-              <div className="inline-flex items-center gap-2 bg-linear-to-r from-yellow-900/80 to-amber-900/80 backdrop-blur-sm text-yellow-200 text-xs font-bold px-3 py-2 rounded-full border border-yellow-800/50">
+              <div className="inline-flex items-center gap-2 bg-blue-600 backdrop-blur-sm text-white text-xs font-bold px-3 py-2 rounded-full border border-blue-500 shadow-sm">
                 <Zap size={12} />
                 Early Bird
               </div>
@@ -438,7 +437,7 @@ export default function Dashboard() {
 
           <div className="absolute bottom-4 right-4">
             {!soldOut && open && (
-              <div className="inline-flex items-center gap-2 bg-linear-to-r from-emerald-900/80 to-green-900/80 backdrop-blur-sm text-emerald-200 text-xs font-bold px-3 py-2 rounded-full border border-emerald-800/50">
+              <div className="inline-flex items-center gap-2 bg-emerald-500 backdrop-blur-sm text-white text-xs font-bold px-3 py-2 rounded-full border border-emerald-400 shadow-sm">
                 <CheckCircle size={12} />
                 เปิดรับสมัคร
               </div>
@@ -449,30 +448,37 @@ export default function Dashboard() {
         <div className="p-5 space-y-5">
           {/* Title Section */}
           <div>
-            <h3 className="text-lg font-bold text-white line-clamp-1 group-hover:text-blue-300 transition-colors">
+            <h3 className="text-lg font-bold text-gray-900 line-clamp-1 group-hover:text-blue-600 transition-colors">
               {project.title}
             </h3>
-            <p className="text-sm text-gray-400 mt-1 line-clamp-1">
+            <p className="text-sm text-gray-500 mt-1 line-clamp-1">
               {project.subtitle}
             </p>
           </div>
 
           {/* Description */}
-          <p className="text-gray-300 text-sm leading-relaxed line-clamp-3">
+          <p className="text-gray-600 text-sm leading-relaxed line-clamp-3">
             {project.detail}
           </p>
 
           {/* Activity Selection */}
           {!isClosed(project.close_regi) && !isNotYetOpen(project.open_regi) ? (
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <Database className="w-4 h-4 text-blue-400" />
-                <span className="text-sm font-medium text-gray-300">
-                  เลือกแพ็กเกจ/กิจกรรม
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 rounded-lg bg-blue-50 border border-blue-100">
+                    <Database className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <span className="text-sm font-semibold text-gray-800">
+                    เลือกแพ็กเกจ/กิจกรรม
+                  </span>
+                </div>
+                <span className="text-[11px] font-medium text-gray-400 uppercase tracking-wider">
+                  {project.activities.length} ตัวเลือก
                 </span>
               </div>
 
-              <div className="space-y-3">
+              <div className="grid gap-3">
                 {project.activities.map((a) => {
                   const price = getCurrentPrice(a, project.open_regi);
                   const isChecked = selectedType === a.type;
@@ -497,89 +503,96 @@ export default function Dashboard() {
                   };
 
                   return (
-                    <label
+                    <div
                       key={`${a.type}-${a.id ?? Math.random()}`}
-                      className={[
-                        "flex items-center justify-between gap-3 rounded-xl border px-4 py-3 cursor-pointer transition-all",
-                        isChecked && !activityFull
-                          ? "border-blue-500 bg-blue-900/20"
-                          : activityFull
-                            ? "border-gray-700 bg-gray-900/50 cursor-not-allowed opacity-60"
-                            : "border-gray-700 bg-gray-900/30 hover:bg-gray-800/50",
-                      ].join(" ")}
                       onClick={handleSelect}
+                      className={`relative group/item flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border-2 p-4 cursor-pointer transition-all duration-300 ${
+                        isChecked && !activityFull
+                          ? "border-blue-500 bg-blue-50/50 shadow-sm"
+                          : activityFull
+                            ? "border-gray-100 bg-gray-50 cursor-not-allowed opacity-60"
+                            : "border-gray-100 bg-gray-50/50 hover:border-gray-200 hover:bg-white"
+                      }`}
                     >
-                      <div className="flex items-center gap-3">
+                      {/* Selection Indicator & Primary Info */}
+                      <div className="flex items-start gap-4">
                         <div
-                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center
-                              ${
-                                isChecked && !activityFull
-                                  ? "border-blue-500 bg-blue-500"
-                                  : "border-gray-600"
-                              }
-                              ${activityFull ? "border-gray-500" : ""}
-                            `}
+                          className={`mt-0.5 w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-all duration-300 ${
+                            isChecked && !activityFull
+                              ? "border-blue-500 bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.2)]"
+                              : "border-gray-300 group-hover/item:border-gray-400"
+                          }`}
                         >
                           {isChecked && !activityFull && (
-                            <div className="w-2 h-2 rounded-full bg-white"></div>
+                            <Check
+                              className="w-3.5 h-3.5 text-white"
+                              strokeWidth={3}
+                            />
                           )}
                         </div>
-                        <div className="flex flex-col">
+
+                        <div className="flex flex-col gap-1.5">
                           <span
-                            className={`text-sm font-semibold ${
-                              activityFull ? "text-gray-500" : "text-gray-200"
+                            className={`font-bold text-base transition-colors ${
+                              isChecked
+                                ? "text-blue-700"
+                                : activityFull
+                                  ? "text-gray-400"
+                                  : "text-gray-800"
                             }`}
                           >
                             {activityLabel(a.type)}
                           </span>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="text-xs text-gray-500">
-                              {/* {a.capacity} คน */}
-                            </span>
-                            <div className="w-1 h-1 bg-gray-600 rounded-full"></div>
-                            <span className="text-xs text-gray-500">
-                              สมัครแล้ว {regsCount} คน
-                            </span>
-                            <div className="w-1 h-1 bg-gray-600 rounded-full"></div>
-                            <span
-                              className={`text-xs font-medium ${
-                                remaining <= 5
-                                  ? "text-red-400"
-                                  : "text-green-400"
-                              }`}
-                            >
-                              คงเหลือ {remaining} คน
-                            </span>
+
+                          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                            <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                              <Database size={12} className="opacity-70" />
+                              <span>{regsCount} สมัครแล้ว</span>
+                            </div>
+                            {activityFull ? (
+                              <span className="px-2 py-0.5 rounded-md bg-red-50 border border-red-100 text-[10px] font-bold text-red-600 uppercase tracking-tight">
+                                เต็มแล้ว
+                              </span>
+                            ) : (
+                              <div
+                                className={`flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-tight ${
+                                  remaining <= 5
+                                    ? "bg-amber-50 border border-amber-100 text-amber-600"
+                                    : "bg-emerald-50 border border-emerald-100 text-emerald-600"
+                                }`}
+                              >
+                                {remaining} ที่ว่าง
+                              </div>
+                            )}
                           </div>
-                          {activityFull && (
-                            <span className="mt-2 inline-flex items-center gap-1.5 px-2 py-1 text-xs rounded bg-red-900/30 border border-red-800/50 text-red-300 w-fit">
-                              เต็มแล้ว
-                            </span>
-                          )}
                         </div>
                       </div>
 
-                      <div className="text-right">
+                      {/* Price & Badge */}
+                      <div className="flex items-center justify-between sm:flex-col sm:items-end sm:justify-center gap-1 pl-10 sm:pl-0 border-t border-gray-100 sm:border-0 pt-3 sm:pt-0 mt-1 sm:mt-0">
                         <div
-                          className={`text-lg font-bold ${
-                            activityFull ? "text-gray-500" : "text-white"
+                          className={`text-xl font-black ${
+                            activityFull ? "text-gray-400" : "text-gray-900"
                           }`}
                         >
-                          ฿{price.toLocaleString("th-TH")}
+                          <span className="text-sm font-medium mr-1 text-gray-500">
+                            ฿
+                          </span>
+                          {price.toLocaleString("th-TH")}
                         </div>
-                        <div className="text-xs text-gray-400">
-                          {isEarlyBirdNow(project.open_regi)
-                            ? "Early Bird"
-                            : "Regular"}
-                        </div>
+                        {isEarlyBirdNow(project.open_regi) && !activityFull && (
+                          <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50 border border-blue-100 text-[9px] font-black text-blue-600 uppercase italic">
+                            <Zap size={8} /> Early Bird
+                          </div>
+                        )}
                       </div>
-                    </label>
+                    </div>
                   );
                 })}
               </div>
             </div>
           ) : (
-            <div className="inline-flex items-center gap-2 bg-linear-to-r from-gray-900/50 to-gray-800/50 text-gray-400 text-sm font-medium px-4 py-2.5 rounded-xl border border-gray-700">
+            <div className="inline-flex items-center gap-2 bg-gray-50 text-gray-500 text-sm font-medium px-4 py-2.5 rounded-xl border border-gray-100">
               <Clock size={14} />
               ปิดรับสมัคร
             </div>
@@ -597,9 +610,9 @@ export default function Dashboard() {
 
               if (closed) {
                 return (
-                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-900/50 border border-gray-700 rounded-lg">
-                    <div className="w-2 h-2 bg-gray-500 rounded-full" />
-                    <span className="text-sm font-medium text-gray-400">
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full" />
+                    <span className="text-sm font-medium text-gray-500">
                       ปิดรับสมัคร
                     </span>
                   </div>
@@ -608,9 +621,9 @@ export default function Dashboard() {
 
               if (full) {
                 return (
-                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-red-900/30 border border-red-800/50 rounded-lg">
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-red-50 border border-red-100 rounded-lg">
                     <div className="w-2 h-2 bg-red-500 rounded-full" />
-                    <span className="text-sm font-medium text-red-300">
+                    <span className="text-sm font-medium text-red-600">
                       เต็มแล้ว
                     </span>
                   </div>
@@ -619,10 +632,11 @@ export default function Dashboard() {
 
               if (notYetOpen) {
                 return (
-                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-yellow-900/30 border border-yellow-800/50 rounded-lg">
-                    <div className="w-2 h-2 bg-yellow-500 rounded-full" />
-                    <span className="text-sm font-medium text-yellow-300">
-                      เปิดลงทะเบียน {">"} {formatTHDateTime(project.open_regi)}
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-50 border border-amber-100 rounded-lg">
+                    <div className="w-2 h-2 bg-amber-500 rounded-full" />
+                    <span className="text-sm font-medium text-amber-700">
+                      เปิดลงทะเบียน {">"}{" "}
+                      {formatTHDateTime(project.open_regi)}
                     </span>
                   </div>
                 );
@@ -631,16 +645,16 @@ export default function Dashboard() {
               if (open) {
                 const early = isEarlyBirdNow(project.open_regi);
                 return early ? (
-                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-yellow-900/30 border border-yellow-800/50 rounded-lg">
-                    <div className="w-2 h-2 bg-yellow-500 rounded-full" />
-                    <span className="text-sm font-medium text-yellow-300">
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-50 border border-amber-100 rounded-lg">
+                    <div className="w-2 h-2 bg-amber-500 rounded-full" />
+                    <span className="text-sm font-medium text-amber-700">
                       Early Bird
                     </span>
                   </div>
                 ) : (
-                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-900/30 border border-blue-800/50 rounded-lg">
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 border border-blue-100 rounded-lg">
                     <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                    <span className="text-sm font-medium text-blue-300">
+                    <span className="text-sm font-medium text-blue-700">
                       เปิดรับสมัคร {formatTHDateTime(project.open_regi)} -{" "}
                       {formatTHDateTime(project.close_regi)}
                     </span>
@@ -649,9 +663,9 @@ export default function Dashboard() {
               }
 
               return (
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-900/50 border border-gray-700 rounded-lg">
-                  <div className="w-2 h-2 bg-gray-500 rounded-full" />
-                  <span className="text-sm font-medium text-gray-400">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg">
+                  <div className="w-2 h-2 bg-gray-400 rounded-full" />
+                  <span className="text-sm font-medium text-gray-500">
                     สถานะไม่ระบุ
                   </span>
                 </div>
@@ -662,98 +676,86 @@ export default function Dashboard() {
           {/* Info Footer */}
           {!isNotYetOpen(project.open_regi) && (
             <>
-              <div className="pt-4 border-t border-gray-800">
-                <div className="flex items-center justify-between text-sm text-gray-400">
+              <div className="pt-4 border-t border-gray-100">
+                <div className="flex items-center justify-between text-sm text-gray-500">
                   <div className="flex items-center gap-2">
                     <CalendarDays size={14} />
                     <span>
                       ปิดรับ {formatRelativeTime(String(project.close_regi))}
                     </span>
                   </div>
-                  {/* <div className="flex items-center gap-1">
-                    <Users size={14} />
-                    <span>
-                      {project.count_regi || 0}/
-                      {getTotalCapacity(project.activities)} คน
-                    </span>
-                  </div> */}
                 </div>
               </div>
               {/* Slip Payment */}
               <div className="space-y-4">
-                <div className="flex flex-col gap-3 p-4 bg-gray-900/50 rounded-xl border border-gray-700">
-                  {/* ส่วนหัวแบบกะทัดรัด */}
+                <div className="flex flex-col gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-100">
                   <div className="flex items-center gap-2">
-                    <div className="p-1.5 rounded-lg bg-blue-500/10">
-                      <CreditCard className="w-4 h-4 text-blue-400" />
+                    <div className="p-1.5 rounded-lg bg-blue-100/50">
+                      <CreditCard className="w-4 h-4 text-blue-600" />
                     </div>
-                    <span className="font-medium text-gray-200 text-sm">
+                    <span className="font-bold text-gray-800 text-sm">
                       แนบสลิปชำระเงิน
                     </span>
                   </div>
 
-                  {/* ข้อมูลบัญชี — แสดงเฉพาะเมื่อเลือก Package แล้ว */}
                   {selectedType ? (
                     <div className="space-y-2 text-xs">
-                      {/* ธนาคาร */}
                       <div className="flex items-center gap-2">
                         <span className="text-gray-500 w-14">ธนาคาร:</span>
-                        <span className="text-gray-300 font-medium">
+                        <span className="text-gray-700 font-semibold">
                           ไทยพาณิชย์ สาขามหาวิทยาลัยเชียงใหม่
                         </span>
                       </div>
 
-                      {/* ชื่อบัญชี */}
                       <div className="flex items-start gap-2">
                         <span className="text-gray-500 w-14 shrink-0">
                           ชื่อบัญชี:
                         </span>
-                        <span className="text-gray-300">
+                        <span className="text-gray-700 font-medium">
                           คณะสัตวแพทยศาสตร์ มหาวิทยาลัยเชียงใหม่
                         </span>
                       </div>
 
-                      {/* เลขบัญชีพร้อมคัดลอก */}
                       <div className="flex items-center gap-2">
                         <span className="text-gray-500 w-14">เลขบัญชี:</span>
                         <div className="flex items-center gap-2 flex-1">
-                          <div className="font-mono text-gray-100 font-bold tracking-wider bg-gray-800/50 px-2 py-1 rounded border border-gray-700">
+                          <div className="font-mono text-gray-900 font-bold tracking-wider bg-white px-2 py-1 rounded border border-gray-200">
                             667-212002-0
                           </div>
                           <button
                             onClick={handleCopy}
-                            className="p-1.5 rounded-md hover:bg-gray-800 transition-colors shrink-0"
+                            className="p-1.5 rounded-md hover:bg-white transition-colors shrink-0 shadow-sm border border-gray-100"
                             title="คัดลอกเลขบัญชี"
                           >
                             {copied ? (
-                              <Check className="w-3.5 h-3.5 text-green-400" />
+                              <Check className="w-3.5 h-3.5 text-emerald-500" />
                             ) : (
-                              <Copy className="w-3.5 h-3.5 text-gray-400 hover:text-blue-400" />
+                              <Copy className="w-3.5 h-3.5 text-gray-400 hover:text-blue-500" />
                             )}
                           </button>
                         </div>
                       </div>
                     </div>
                   ) : (
-                    <p className="text-xs text-gray-500 italic">
+                    <p className="text-xs text-gray-400 italic">
                       กรุณาเลือกแพ็กเกจก่อนเพื่อดูข้อมูลบัญชี
                     </p>
                   )}
                 </div>
                 <div
-                  className={`relative rounded-xl border-2 transition-all ${
+                  className={`relative rounded-2xl border-2 border-dashed transition-all ${
                     slipPayment && selectedType
-                      ? "border-emerald-500/50 bg-emerald-900/10"
+                      ? "border-emerald-500/50 bg-emerald-50/30"
                       : canSelect
-                        ? "border-gray-700 hover:border-blue-500/50"
-                        : "border-gray-800 bg-gray-900/30"
+                        ? "border-gray-300 bg-gray-50 hover:border-blue-400 hover:bg-white"
+                        : "border-gray-200 bg-gray-50/50 opacity-50"
                   }`}
                 >
                   {slipPayment && selectedType ? (
                     <div className="p-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
-                          <div className="w-14 h-14 rounded-lg overflow-hidden border border-gray-700 bg-black/50">
+                          <div className="w-14 h-14 rounded-lg overflow-hidden border border-gray-200 bg-white">
                             <img
                               src={slipPayment}
                               alt="สลิป"
@@ -761,17 +763,17 @@ export default function Dashboard() {
                             />
                           </div>
                           <div>
-                            <p className="text-sm font-medium text-emerald-300">
+                            <p className="text-sm font-bold text-emerald-600">
                               แนบสลิปแล้ว
                             </p>
-                            <p className="text-xs text-gray-400">
+                            <p className="text-xs text-gray-500 font-medium">
                               แตะเพื่อเปลี่ยนไฟล์
                             </p>
                           </div>
                         </div>
                         <button
                           onClick={() => setSlipPayment(null)}
-                          className="p-2 text-gray-500 hover:text-red-400 transition-colors"
+                          className="p-2 text-gray-400 hover:text-red-500 transition-colors"
                           type="button"
                         >
                           <Trash2 className="w-5 h-5" />
@@ -784,27 +786,27 @@ export default function Dashboard() {
                         <div
                           className={`p-3 rounded-xl ${
                             canSelect
-                              ? "bg-blue-900/20 border border-blue-800/30"
-                              : "bg-gray-900 border border-gray-800"
+                              ? "bg-blue-50 border border-blue-100"
+                              : "bg-gray-100 border border-gray-200"
                           }`}
                         >
                           <Upload
                             className={`w-6 h-6 ${
-                              canSelect ? "text-blue-400" : "text-gray-600"
+                              canSelect ? "text-blue-500" : "text-gray-400"
                             }`}
                           />
                         </div>
                         <div>
                           <p
-                            className={`text-sm ${
-                              canSelect ? "text-gray-300" : "text-gray-500"
+                            className={`text-sm font-bold ${
+                              canSelect ? "text-gray-700" : "text-gray-400"
                             }`}
                           >
                             {selectedType
                               ? "แตะเพื่ออัพโหลดสลิป"
                               : "เลือกแพ็กเกจก่อนแล้วจึงแนบสลิป"}
                           </p>
-                          <p className="text-xs text-gray-500 mt-1">
+                          <p className="text-xs text-gray-400 mt-1">
                             รูปภาพเท่านั้น • สูงสุด 5MB
                           </p>
                         </div>
@@ -818,54 +820,29 @@ export default function Dashboard() {
                     type="file"
                     accept="image/*"
                     className="absolute inset-0 w-full h-full opacity-0 disabled:opacity-0 cursor-pointer disabled:cursor-not-allowed"
-                    title={
-                      !selectedType
-                        ? "กรุณาเลือกแพ็กเกจก่อนแนบสลิป"
-                        : "อัพโหลดสลิปการชำระเงิน"
-                    }
                   />
                 </div>
                 {/* Error Message */}
                 {errors && (
-                  <div className="flex items-start gap-3 p-3 bg-red-900/20 border border-red-800/50 rounded-lg">
-                    <AlertCircle className="w-5 h-5 text-red-400 mt-0.5 shrink-0" />
+                  <div className="flex items-start gap-3 p-3 bg-red-50 border border-red-100 rounded-xl">
+                    <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 shrink-0" />
                     <div>
-                      <p className="text-sm text-red-300 font-medium">
+                      <p className="text-sm text-red-700 font-bold">
                         คำเตือน
                       </p>
-                      <p className="text-sm text-red-200">{errors}</p>
-                      <ul className="text-[12px] text-red-200">
-                        <p>
-                          - ตรวจสอบอีเมลที่ท่านได้ลงทะเบียนไว้ หรือ
-                          ดูโปรเจคที่สมัคร
-                        </p>
-                        <p>- กรณีได้รับโควต้า ดูโปรเจคที่สมัคร</p>
-                      </ul>
+                      <p className="text-sm text-red-600">{errors}</p>
                     </div>
                   </div>
                 )}
-                {/* Helper Tips */}
-                <div className="text-sm text-gray-400 space-y-2">
-                  <div className="flex items-center gap-3">
-                    <div className="w-5 h-5 rounded-full bg-green-900/30 border border-green-800/50 flex items-center justify-center">
-                      <CheckCircle className="w-3 h-3 text-green-400" />
-                    </div>
+                <div className="text-xs text-gray-500 space-y-1.5 px-1 font-medium">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-3 h-3 text-emerald-500" />
                     <span>อัพโหลดรูปภาพสลิปการโอนเงิน</span>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-5 h-5 rounded-full bg-green-900/30 border border-green-800/50 flex items-center justify-center">
-                      <CheckCircle className="w-3 h-3 text-green-400" />
-                    </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-3 h-3 text-emerald-500" />
                     <span>เห็นเลขบัญชีและยอดโอนได้ชัดเจน</span>
                   </div>
-                  {!slipPayment && selectedType && (
-                    <div className="flex items-center gap-3 text-amber-300">
-                      <div className="w-5 h-5 rounded-full bg-amber-900/30 border border-amber-800/50 flex items-center justify-center">
-                        <AlertCircle className="w-3 h-3 text-amber-400" />
-                      </div>
-                      <span>กรุณาแนบสลิปก่อนสมัคร</span>
-                    </div>
-                  )}
                 </div>
               </div>
             </>
@@ -889,10 +866,10 @@ export default function Dashboard() {
               };
               handleRegister(payload);
             }}
-            className={`w-full px-4 py-3.5 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-3 ${
+            className={`w-full px-4 py-4 rounded-2xl font-bold transition-all duration-300 flex items-center justify-center gap-3 ${
               canRegister && !isLoading
-                ? "bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white hover:shadow-lg hover:shadow-blue-500/20 active:scale-95"
-                : "bg-gray-900 border border-gray-800 text-gray-500 cursor-not-allowed"
+                ? "bg-linear-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/25 hover:scale-[1.02] active:scale-95"
+                : "bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed"
             }`}
           >
             {isLoading ? (
@@ -965,68 +942,27 @@ export default function Dashboard() {
   const sliceStart = (currentPage - 1) * PAGE_SIZE;
   const visible = sorted.slice(sliceStart, sliceStart + PAGE_SIZE);
 
-  // Calculate stats
-  // const stats = useMemo(() => {
-  //   const availableProjects = projects.filter((p) => {
-  //     const soldOut = isSoldOut(p.close_regi);
-  //     const totalCapacity = getTotalCapacity(p.activities);
-  //     const enrolled = Number(p.count_regi ?? 0);
-  //     const isFull = enrolled >= totalCapacity && totalCapacity > 0;
-  //     return !soldOut && !isFull;
-  //   });
-
-  //   return [
-  //     {
-  //       label: "โปรเจ็กต์ทั้งหมด",
-  //       value: availableProjects.length,
-  //       icon: <Database className="w-5 h-5" />,
-  //       color: "from-blue-500 to-cyan-500",
-  //       bg: "bg-blue-900/20",
-  //       border: "border-blue-800/30",
-  //     },
-  //     {
-  //       label: "กำลังเปิดรับ",
-  //       value: availableProjects.filter((p) =>
-  //         isRegiOpen(p.open_regi, p.close_regi),
-  //       ).length,
-  //       icon: <CheckCircle className="w-5 h-5" />,
-  //       color: "from-emerald-500 to-green-500",
-  //       bg: "bg-emerald-900/20",
-  //       border: "border-emerald-800/30",
-  //     },
-  //     {
-  //       label: "จะปิดเร็วนี้",
-  //       value: availableProjects.filter((p) => isClosingSoon(p.close_regi))
-  //         .length,
-  //       icon: <Clock className="w-5 h-5" />,
-  //       color: "from-amber-500 to-orange-500",
-  //       bg: "bg-amber-900/20",
-  //       border: "border-amber-800/30",
-  //     },
-  //   ];
-  // }, [projects]);
-
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-900 via-[#111829] to-[#0d1420] py-6 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-50 py-6 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-[#172131] rounded-2xl border border-gray-800">
-                <TrendingUp className="w-7 h-7 text-blue-400" />
+              <div className="p-3 bg-white rounded-2xl border border-gray-200 shadow-sm">
+                <TrendingUp className="w-7 h-7 text-blue-600" />
               </div>
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-white">
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
                   โครงการทั้งหมด
                 </h1>
 
                 {status === "disconnected" ? (
-                  <span className="inline-flex items-center rounded-md bg-red-400/10 px-2 py-1 text-xs font-medium text-red-400 inset-ring inset-ring-red-500/20">
+                  <span className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
                     {status.split(":")[0].toUpperCase()}
                   </span>
                 ) : (
-                  <span className="inline-flex items-center rounded-md bg-green-400/10 px-2 py-1 text-xs font-medium text-green-400 inset-ring inset-ring-green-500/20">
+                  <span className="inline-flex items-center rounded-md bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/10">
                     {status.split(":")[0].toUpperCase()}
                   </span>
                 )}
@@ -1035,54 +971,30 @@ export default function Dashboard() {
             <button
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className="p-3 bg-[#172131] hover:bg-[#1a2438] border border-gray-800 rounded-xl transition-colors disabled:opacity-50"
+              className="p-3 bg-white hover:bg-gray-50 border border-gray-200 rounded-xl transition-colors disabled:opacity-50 shadow-sm"
             >
               <RefreshCw
-                className={`w-5 h-5 text-blue-400 ${
+                className={`w-5 h-5 text-blue-600 ${
                   isRefreshing ? "animate-spin" : ""
                 }`}
               />
             </button>
           </div>
-
-          {/* Stats */}
-          {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            {stats.map((stat, idx) => (
-              <div
-                key={idx}
-                className={`${stat.bg} border ${stat.border} rounded-2xl p-5 backdrop-blur-sm`}
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-400">{stat.label}</p>
-                    <p className="text-2xl font-bold text-white mt-1">
-                      {stat.value}
-                    </p>
-                  </div>
-                  <div
-                    className={`w-12 h-12 rounded-xl bg-linear-to-r ${stat.color} flex items-center justify-center text-white`}
-                  >
-                    {stat.icon}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div> */}
         </div>
 
         {/* Controls */}
-        <div className="bg-[#161f2f] border border-gray-800 rounded-2xl p-6 mb-8 backdrop-blur-sm">
+        <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-8 shadow-sm">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             {/* Left: Results Info */}
             <div className="flex items-center gap-4">
-              <div className="p-2 bg-blue-900/20 rounded-lg">
-                <Sparkles className="w-5 h-5 text-blue-400" />
+              <div className="p-2 bg-blue-50 rounded-lg">
+                <Sparkles className="w-5 h-5 text-blue-600" />
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-white">
+                <h2 className="text-lg font-bold text-gray-900">
                   โปรเจ็กต์ที่พบ
                 </h2>
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-gray-500 font-medium">
                   แสดง {Math.min(PAGE_SIZE, visible.length)} จาก {sorted.length}{" "}
                   โปรเจ็กต์
                 </p>
@@ -1093,28 +1005,24 @@ export default function Dashboard() {
             <div className="space-y-4 sm:space-y-0 sm:flex sm:items-center sm:gap-4">
               {/* Filter */}
               <div className="relative">
-                <Filter className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
+                <Filter className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <select
                   value={filter}
                   onChange={(e) => {
                     setFilter(e.target.value as any);
                     setPage(1);
                   }}
-                  className="pl-12 pr-10 py-3 bg-gray-900 border border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white appearance-none w-full sm:w-48"
+                  className="pl-12 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 font-medium appearance-none w-full sm:w-48"
                 >
-                  <option value="all" className="bg-gray-900">
-                    โปรเจ็กต์ทั้งหมด
-                  </option>
-                  <option value="open" className="bg-gray-900">
-                    เปิดรับสมัคร
-                  </option>
+                  <option value="all">โปรเจ็กต์ทั้งหมด</option>
+                  <option value="open">เปิดรับสมัคร</option>
                 </select>
-                <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none" />
+                <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
               </div>
 
               {/* Search */}
               <div className="relative flex-1 min-w-0">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   type="text"
                   placeholder="ค้นหาโครงการ ชื่อ หรือคำอธิบาย..."
@@ -1123,12 +1031,12 @@ export default function Dashboard() {
                     setSearch(e.target.value);
                     setPage(1);
                   }}
-                  className="w-full pl-12 pr-10 py-3 bg-gray-900 border border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white placeholder-gray-500"
+                  className="w-full pl-12 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-400 font-medium"
                 />
                 {search && (
                   <button
                     onClick={() => setSearch("")}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-300"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   >
                     <X className="w-5 h-5" />
                   </button>
@@ -1139,28 +1047,28 @@ export default function Dashboard() {
 
           {/* Active Filters */}
           {(filter !== "all" || search) && (
-            <div className="mt-6 pt-6 border-t border-gray-800">
+            <div className="mt-6 pt-6 border-t border-gray-100">
               <div className="flex items-center gap-3">
-                <Tag className="w-4 h-4 text-gray-500" />
-                <span className="text-sm text-gray-400">กรองแล้วด้วย:</span>
+                <Tag className="w-4 h-4 text-gray-400" />
+                <span className="text-sm text-gray-500 font-medium">กรองแล้วด้วย:</span>
                 <div className="flex flex-wrap gap-2">
                   {filter === "open" && (
-                    <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-900/30 text-blue-300 text-xs font-medium rounded-lg border border-blue-800/50">
+                    <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-700 text-xs font-bold rounded-lg border border-blue-100">
                       เปิดรับสมัคร
                       <button
                         onClick={() => setFilter("all")}
-                        className="hover:text-blue-200"
+                        className="hover:text-blue-900"
                       >
                         <X className="w-3 h-3" />
                       </button>
                     </span>
                   )}
                   {search && (
-                    <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-purple-900/30 text-purple-300 text-xs font-medium rounded-lg border border-purple-800/50">
+                    <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-purple-50 text-purple-700 text-xs font-bold rounded-lg border border-purple-100">
                       ค้นหา: "{search}"
                       <button
                         onClick={() => setSearch("")}
-                        className="hover:text-purple-200"
+                        className="hover:text-purple-900"
                       >
                         <X className="w-3 h-3" />
                       </button>
@@ -1172,7 +1080,7 @@ export default function Dashboard() {
                     setFilter("all");
                     setSearch("");
                   }}
-                  className="ml-auto text-sm text-gray-500 hover:text-gray-300"
+                  className="ml-auto text-sm text-gray-400 hover:text-gray-600 font-bold"
                 >
                   ล้างทั้งหมด
                 </button>
@@ -1189,14 +1097,14 @@ export default function Dashboard() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-16 bg-[#161f2f] rounded-2xl border border-gray-800">
-            <div className="w-20 h-20 mx-auto mb-4 bg-gray-900/50 rounded-full flex items-center justify-center">
-              <Search className="w-10 h-10 text-gray-500" />
+          <div className="text-center py-16 bg-white rounded-2xl border border-gray-200 shadow-sm">
+            <div className="w-20 h-20 mx-auto mb-4 bg-gray-50 rounded-full flex items-center justify-center">
+              <Search className="w-10 h-10 text-gray-300" />
             </div>
-            <h3 className="text-xl font-semibold text-white mb-2">
+            <h3 className="text-xl font-bold text-gray-900 mb-2">
               ไม่พบโปรเจ็กต์
             </h3>
-            <p className="text-gray-400 mb-6">
+            <p className="text-gray-500 mb-6 font-medium">
               ลองเปลี่ยนคำค้นหาหรือประเภทโปรเจ็กต์ดูนะ
             </p>
             <button
@@ -1204,7 +1112,7 @@ export default function Dashboard() {
                 setFilter("all");
                 setSearch("");
               }}
-              className="px-6 py-2.5 bg-linear-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium hover:opacity-90 transition-opacity"
+              className="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/20"
             >
               ล้างตัวกรอง
             </button>
@@ -1214,7 +1122,7 @@ export default function Dashboard() {
         {/* Pagination */}
         {sorted.length > 0 && (
           <div className="mt-12 flex flex-col sm:flex-row items-center justify-between gap-6">
-            <div className="text-gray-400 text-sm">
+            <div className="text-gray-500 text-sm font-medium">
               แสดง {sliceStart + 1} -{" "}
               {Math.min(sliceStart + PAGE_SIZE, sorted.length)} จาก{" "}
               {sorted.length} โปรเจ็กต์
@@ -1224,10 +1132,10 @@ export default function Dashboard() {
               <button
                 disabled={currentPage <= 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium transition-all ${
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all ${
                   currentPage <= 1
-                    ? "bg-gray-900 border border-gray-800 text-gray-500 cursor-not-allowed"
-                    : "bg-gray-900 border border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white hover:border-gray-600"
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200"
+                    : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-blue-600 shadow-sm"
                 }`}
               >
                 <ChevronLeft size={18} />
@@ -1251,10 +1159,10 @@ export default function Dashboard() {
                     <button
                       key={i}
                       onClick={() => setPage(pageNum)}
-                      className={`w-10 h-10 rounded-xl font-medium transition-all ${
+                      className={`w-10 h-10 rounded-xl font-bold transition-all ${
                         currentPage === pageNum
-                          ? "bg-linear-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/20"
-                          : "bg-gray-900 border border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-white"
+                          ? "bg-blue-600 text-white shadow-lg shadow-blue-500/20"
+                          : "bg-white border border-gray-200 text-gray-500 hover:text-blue-600 shadow-sm"
                       }`}
                     >
                       {pageNum}
@@ -1263,17 +1171,17 @@ export default function Dashboard() {
                 })}
 
                 {totalPages > 5 && (
-                  <span className="px-2 text-gray-500">...</span>
+                  <span className="px-2 text-gray-400">...</span>
                 )}
               </div>
 
               <button
                 disabled={currentPage >= totalPages}
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium transition-all ${
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all ${
                   currentPage >= totalPages
-                    ? "bg-gray-900 border border-gray-800 text-gray-500 cursor-not-allowed"
-                    : "bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white hover:shadow-lg hover:shadow-blue-500/20"
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200"
+                    : "bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-500/20"
                 }`}
               >
                 ถัดไป

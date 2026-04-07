@@ -6,6 +6,7 @@ import {
   EyeOff,
   KeyRound,
   Lamp,
+  RefreshCw,
   Shield,
   X,
 } from "lucide-react";
@@ -20,13 +21,12 @@ type DecodedData = {
   id: number;
   email: string;
   codeId: string;
-  exp: number; // expiresAt in ms (Unix ms)
+  exp: number;
 };
 
-const LINK_TTL_MS = 30 * 60 * 1000; // 30 นาที
+const LINK_TTL_MS = 30 * 60 * 1000;
 
 export default function NewPasswordForm() {
-  // --- ฟอร์ม/สถานะทั่วไป ---
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -40,26 +40,20 @@ export default function NewPasswordForm() {
   const [codeId, setCodeId] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
 
-  // --- Query key / Router ---
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const key = queryParams.get("key");
   const hasRun = useRef(false);
   const navigate = useNavigate();
 
-  // --- Countdown สำหรับแสดงบน UI ---
   const [expiresAtMs, setExpiresAtMs] = useState<number | null>(null);
   const [remainingMs, setRemainingMs] = useState<number>(0);
-
-  // --- Inactivity (ไม่มีการดำเนินการใดๆ 30 นาที) ---
   const lastActionRef = useRef<number>(Date.now());
 
-  // ถ้าไม่มี key → แสดงหน้า NotKey
   if (!key) {
     return <NotKey />;
   }
 
-  // ฟังก์ชันช่วยแสดงรูปแบบเวลา (นาที:วินาที หรือ ชั่วโมง:นาที:วินาที)
   const formatDurationTH = (ms: number) => {
     const totalSec = Math.max(0, Math.ceil(ms / 1000));
     const h = Math.floor(totalSec / 3600);
@@ -71,7 +65,6 @@ export default function NewPasswordForm() {
     return h > 0 ? `${hh}:${mm}:${ss} ชม.` : `${mm}:${ss} นาที`;
   };
 
-  // 1) ถอดรหัส key และตั้ง expiresAt / ตรวจหมดอายุทันที
   useEffect(() => {
     if (hasRun.current) return;
     hasRun.current = true;
@@ -79,19 +72,13 @@ export default function NewPasswordForm() {
     (async () => {
       try {
         const data: DecodedData = await decryptData(key);
-
-        // กรณีที่ data.exp เป็น "เวลาหมดอายุ" (expiresAt in ms)
         const expMs = Number(data.exp);
-
-        // 👉 ถ้าระบบของคุณเก็บเป็น issuedAt ให้ใช้:
-        // const expMs = Number(data.exp) + LINK_TTL_MS;
 
         if (!Number.isFinite(expMs) || expMs <= 0) {
           navigate(`/link-expired?key=${key}`, { replace: true });
           return;
         }
 
-        // หมดอายุแล้ว → กลับหน้า sign-in
         if (Date.now() > expMs) {
           navigate(`/link-expired?key=${key}`, { replace: true });
           return;
@@ -109,7 +96,6 @@ export default function NewPasswordForm() {
     })();
   }, [key, navigate]);
 
-  // 2) Countdown แสดงบน UI (อัพเดททุกวินาที) + หมดเวลา → รีไดเรกต์
   useEffect(() => {
     if (expiresAtMs == null) return;
 
@@ -123,18 +109,16 @@ export default function NewPasswordForm() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [expiresAtMs, navigate]);
+  }, [expiresAtMs, navigate, key]);
 
-  // 3) Inactivity: ไม่มีการดำเนินการใดๆ ครบ 30 นาที → รีไดเรกต์
   useEffect(() => {
     const updateAction = () => {
       lastActionRef.current = Date.now();
     };
 
-    // ฟังเหตุการณ์ที่ถือว่า "การดำเนินการ"
     const events = ["mousemove", "keydown", "click", "touchstart"];
     events.forEach((ev) =>
-      document.addEventListener(ev, updateAction, { passive: true })
+      document.addEventListener(ev, updateAction, { passive: true }),
     );
 
     const interval = setInterval(() => {
@@ -148,9 +132,8 @@ export default function NewPasswordForm() {
       clearInterval(interval);
       events.forEach((ev) => document.removeEventListener(ev, updateAction));
     };
-  }, [navigate]);
+  }, [navigate, key]);
 
-  // ---- Password strength & validate ----
   const validatePasswordStrength = (pwd: string) => {
     let score = 0;
     if (pwd.length >= 8) score++;
@@ -159,13 +142,7 @@ export default function NewPasswordForm() {
     if (/[0-9]/.test(pwd)) score++;
     if (/[^A-Za-z0-9]/.test(pwd)) score++;
 
-    const colors = [
-      "#dc2626", // red-600
-      "#ea580c", // orange-600
-      "#ca8a04", // yellow-600
-      "#65a30d", // lime-600
-      "#16a34a", // green-600
-    ];
+    const colors = ["#dc2626", "#ea580c", "#ca8a04", "#65a30d", "#16a34a"];
     const labels = ["อ่อนมาก", "อ่อน", "ปานกลาง", "ดี", "แข็งแรง"];
 
     return {
@@ -182,8 +159,6 @@ export default function NewPasswordForm() {
     setPasswordTouched(true);
     setConfirmTouched(true);
     setError("");
-
-    // เมื่อผู้ใช้กด/พิมพ์ ถือว่าเป็น activity
     lastActionRef.current = Date.now();
 
     if (!password) {
@@ -202,17 +177,10 @@ export default function NewPasswordForm() {
     }
 
     setIsLoading(true);
-
     if (!id && !codeId && !email) return;
 
     try {
-      const payload = {
-        id,
-        email,
-        codeId,
-        password,
-      };
-
+      const payload = { id, email, codeId, password };
       const response = await newPasswordUser(payload as any);
       if (!response.success) throw new Error(response.message);
       setInfo("รหัสผ่านใหม่ถูกสร้างเรียบร้อยแล้ว");
@@ -226,56 +194,53 @@ export default function NewPasswordForm() {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center p-4 md:p-6">
-      <div className="bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg p-6 md:p-8 border border-gray-700">
-        <div className="text-center mb-6">
-          <div className="w-20 h-20 bg-linear-to-br from-indigo-600 to-purple-700 rounded-full flex items-center justify-center mx-auto shadow-lg mb-6">
-            <KeyRound className="text-white" size={36} />
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 md:p-6">
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-8 md:p-10 border border-gray-200">
+        <div className="text-center mb-8">
+          <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6 border border-blue-100">
+            <KeyRound className="text-blue-600" size={36} />
           </div>
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-1">
+          <h2 className="text-2xl md:text-3xl font-black text-gray-900 mb-1">
             สร้างรหัสผ่านใหม่ 🔒
           </h2>
-          <h3 className="text-lg md:text-xl font-semibold text-gray-300 mb-2">
+          <h3 className="text-lg font-bold text-gray-400">
             Create New Password
           </h3>
-          <p className="text-gray-400 text-sm">
-            กรุณาตั้งรหัสผ่านใหม่ที่แข็งแรงและปลอดภัย
-          </p>
         </div>
 
-        {/* Countdown Badge แสดงเวลาลิงก์หมดอายุ */}
         {expiresAtMs && (
-          <div
-            className="mb-6 flex items-center justify-center"
-            aria-live="polite"
-          >
-            <div className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-yellow-800 bg-yellow-900/30 text-yellow-200 font-medium">
-              <span>⏳ ลิงก์จะหมดอายุใน</span>
-              <span className="font-bold">{formatDurationTH(remainingMs)}</span>
+          <div className="mb-8 text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-50 text-amber-700 border border-amber-100 font-bold text-sm">
+              <span>⏳ ลิงก์จะหมดอายุใน:</span>
+              <span className="font-black text-amber-800">
+                {formatDurationTH(remainingMs)}
+              </span>
             </div>
           </div>
         )}
 
         <div className="space-y-6">
           {error && (
-            <div className="bg-linear-to-r from-red-900/30 to-pink-900/30 border border-red-800 rounded-xl p-4 flex items-start gap-3">
-              <AlertCircle className="text-red-400" size={20} />
-              <p className="text-sm text-red-300">{error}</p>
+            <div className="bg-red-50 border border-red-100 rounded-2xl p-4 flex items-start gap-3">
+              <AlertCircle className="text-red-600 shrink-0 mt-0.5" size={20} />
+              <p className="text-sm font-bold text-red-900">{error}</p>
             </div>
           )}
 
           {info ? (
-            <div className="bg-linear-to-r from-green-900/30 to-lime-900/30 border border-green-800 rounded-xl p-4 flex items-start gap-3">
-              <AlertCircle className="text-green-400" size={20} />
-              <p className="text-sm text-green-300">{info}</p>
+            <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 flex items-start gap-3">
+              <CheckCircle
+                className="text-emerald-600 shrink-0 mt-0.5"
+                size={20}
+              />
+              <p className="text-sm font-bold text-emerald-900">{info}</p>
             </div>
           ) : (
             <>
-              <div>
-                <label className="text-sm font-medium text-gray-300 mb-2 flex items-center gap-2">
-                  <Lamp size={16} className="text-indigo-400" />
-                  รหัสผ่านใหม่ / New Password{" "}
-                  <span className="text-red-400">*</span>
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                  <Lamp size={16} className="text-blue-600" />
+                  รหัสผ่านใหม่ / New Password
                 </label>
                 <div className="relative">
                   <input
@@ -283,35 +248,28 @@ export default function NewPasswordForm() {
                     value={password}
                     onChange={(e) => {
                       setPassword(e.target.value);
-                      lastActionRef.current = Date.now(); // นับว่าเป็น activity
+                      lastActionRef.current = Date.now();
                     }}
                     onBlur={() => setPasswordTouched(true)}
-                    className="w-full pl-10 pr-12 py-3 bg-gray-900 border border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-white placeholder-gray-500"
+                    className="w-full pl-10 pr-12 py-3.5 bg-gray-50 border-2 border-gray-100 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none transition-all font-medium text-gray-900"
                     placeholder="••••••••"
                     disabled={isLoading}
                   />
-                  <Lamp
-                    className="absolute left-3 top-3.5 text-gray-500"
-                    size={20}
-                  />
                   <button
                     type="button"
-                    onClick={() => {
-                      setShowPassword(!showPassword);
-                      lastActionRef.current = Date.now();
-                    }}
-                    className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-200"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600"
                   >
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
                 </div>
 
                 {passwordTouched && password && (
-                  <div className="mt-3 space-y-2">
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 h-2 bg-gray-700 rounded-full overflow-hidden">
+                  <div className="mt-3 p-4 bg-gray-50 rounded-2xl border border-gray-100 space-y-3">
+                    <div className="flex items-center gap-3">
+                      <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
                         <div
-                          className="h-full transition-all duration-300"
+                          className="h-full transition-all duration-500"
                           style={{
                             width: `${(passwordStrength.score / 5) * 100}%`,
                             backgroundColor: passwordStrength.color,
@@ -319,48 +277,45 @@ export default function NewPasswordForm() {
                         />
                       </div>
                       <span
-                        className="text-xs font-medium"
+                        className="text-xs font-black uppercase tracking-wider"
                         style={{ color: passwordStrength.color }}
                       >
                         {passwordStrength.label}
                       </span>
                     </div>
 
-                    <div className="space-y-1">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {[
                         {
                           check: password.length >= 8,
-                          text: "ความยาวอย่างน้อย 8 ตัวอักษร",
+                          text: "ยาว 8 ตัวขึ้นไป",
                         },
                         {
                           check: /[A-Z]/.test(password),
-                          text: "มีตัวอักษรพิมพ์ใหญ่ (A-Z)",
+                          text: "มีพิมพ์ใหญ่ A-Z",
                         },
                         {
                           check: /[a-z]/.test(password),
-                          text: "มีตัวอักษรพิมพ์เล็ก (a-z)",
+                          text: "มีพิมพ์เล็ก a-z",
                         },
-                        {
-                          check: /[0-9]/.test(password),
-                          text: "มีตัวเลข (0-9)",
-                        },
+                        { check: /[0-9]/.test(password), text: "มีตัวเลข 0-9" },
                         {
                           check: /[^A-Za-z0-9]/.test(password),
-                          text: "มีอักขระพิเศษ (!@#$%^&*)",
+                          text: "มีอักขระพิเศษ",
                         },
                       ].map((req, idx) => (
                         <div
                           key={idx}
-                          className="flex items-center gap-2 text-xs"
+                          className="flex items-center gap-2 text-xs font-bold"
                         >
                           {req.check ? (
-                            <Check className="text-green-400" size={14} />
+                            <Check className="text-emerald-500" size={14} />
                           ) : (
-                            <X className="text-gray-500" size={14} />
+                            <X className="text-gray-300" size={14} />
                           )}
                           <span
                             className={
-                              req.check ? "text-green-300" : "text-gray-400"
+                              req.check ? "text-emerald-700" : "text-gray-400"
                             }
                           >
                             {req.text}
@@ -372,11 +327,10 @@ export default function NewPasswordForm() {
                 )}
               </div>
 
-              <div>
-                <label className="text-sm font-medium text-gray-300 mb-2 flex items-center gap-2">
-                  <Shield size={16} className="text-indigo-400" />
-                  ยืนยันรหัสผ่าน / Confirm Password{" "}
-                  <span className="text-red-400">*</span>
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                  <Shield size={16} className="text-blue-600" />
+                  ยืนยันรหัสผ่าน / Confirm Password
                 </label>
                 <div className="relative">
                   <input
@@ -387,28 +341,20 @@ export default function NewPasswordForm() {
                       lastActionRef.current = Date.now();
                     }}
                     onBlur={() => setConfirmTouched(true)}
-                    className={`w-full pl-10 pr-12 py-3 bg-gray-900 border rounded-xl focus:ring-2 outline-none transition-all text-white placeholder-gray-500
-                  ${
-                    confirmTouched && confirmPassword
-                      ? passwordsMatch
-                        ? "border-green-700 focus:ring-green-500 focus:border-green-500"
-                        : "border-red-700 focus:ring-red-500 focus:border-red-500"
-                      : "border-gray-700 focus:ring-indigo-500 focus:border-indigo-500"
-                  }`}
+                    className={`w-full pl-10 pr-12 py-3.5 bg-gray-50 border-2 rounded-xl focus:ring-4 outline-none transition-all font-medium ${
+                      confirmTouched && confirmPassword
+                        ? passwordsMatch
+                          ? "border-emerald-200 focus:ring-emerald-500/10"
+                          : "border-red-200 focus:ring-red-500/10"
+                        : "border-gray-100 focus:ring-blue-500/10 focus:border-blue-500"
+                    }`}
                     placeholder="••••••••"
                     disabled={isLoading}
                   />
-                  <Shield
-                    className="absolute left-3 top-3.5 text-gray-500"
-                    size={20}
-                  />
                   <button
                     type="button"
-                    onClick={() => {
-                      setShowConfirmPassword(!showConfirmPassword);
-                      lastActionRef.current = Date.now();
-                    }}
-                    className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-200"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600"
                   >
                     {showConfirmPassword ? (
                       <EyeOff size={20} />
@@ -417,26 +363,6 @@ export default function NewPasswordForm() {
                     )}
                   </button>
                 </div>
-
-                {confirmTouched && confirmPassword && (
-                  <div className="mt-2 flex items-center gap-2">
-                    {passwordsMatch ? (
-                      <>
-                        <Check className="text-green-400" size={16} />
-                        <span className="text-xs text-green-300">
-                          รหัสผ่านตรงกัน
-                        </span>
-                      </>
-                    ) : (
-                      <>
-                        <X className="text-red-400" size={16} />
-                        <span className="text-xs text-red-300">
-                          รหัสผ่านไม่ตรงกัน
-                        </span>
-                      </>
-                    )}
-                  </div>
-                )}
               </div>
 
               <button
@@ -444,36 +370,29 @@ export default function NewPasswordForm() {
                 disabled={
                   isLoading || !passwordsMatch || passwordStrength.score < 3
                 }
-                className="w-full bg-linear-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all font-medium shadow-lg disabled:from-gray-700 disabled:to-gray-800 disabled:text-gray-400 flex items-center justify-center gap-3"
+                className="w-full bg-linear-to-r from-blue-600 to-indigo-600 text-white py-4 rounded-xl font-black shadow-lg shadow-blue-500/20 active:scale-95 transition-all disabled:opacity-50"
               >
                 {isLoading ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>กำลังบันทึก... / Saving...</span>
-                  </>
+                  <RefreshCw className="animate-spin mx-auto" size={24} />
                 ) : (
-                  <>
-                    <CheckCircle size={20} />
-                    <span>ยืนยันรหัสผ่านใหม่ / Confirm New Password</span>
-                  </>
+                  "ยืนยันรหัสผ่านใหม่ / Confirm"
                 )}
               </button>
             </>
           )}
         </div>
 
-        <div className="mt-6 pt-6 border-t border-gray-700">
-          <div className="bg-blue-900/20 rounded-lg p-4 border border-blue-800/50">
+        <div className="mt-8 pt-6 border-t border-gray-100">
+          <div className="bg-blue-50 rounded-2xl p-4 border border-blue-100">
             <div className="flex items-start gap-3">
-              <Shield className="text-blue-400 mt-0.5" size={18} />
+              <Shield className="text-blue-600 mt-0.5" size={18} />
               <div>
-                <p className="text-xs font-medium text-blue-300 mb-1">
-                  เคล็ดลับความปลอดภัย:
+                <p className="text-xs font-black text-blue-900 uppercase tracking-wider mb-1">
+                  Security Tips:
                 </p>
-                <ul className="text-xs text-blue-200 space-y-1">
-                  <li>• ไม่ควรใช้รหัสผ่านเดียวกันกับเว็บไซต์อื่น</li>
-                  <li>• เปลี่ยนรหัสผ่านเป็นประจำทุก 3-6 เดือน</li>
-                  <li>• ไม่ควรแชร์รหัสผ่านกับผู้อื่น</li>
+                <ul className="text-xs text-blue-700 font-medium space-y-1">
+                  <li>• อย่าใช้รหัสผ่านซ้ำกับเว็บอื่น</li>
+                  <li>• ควรเปลี่ยนรหัสผ่านทุก 3-6 เดือน</li>
                 </ul>
               </div>
             </div>

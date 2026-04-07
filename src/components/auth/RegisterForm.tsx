@@ -226,7 +226,7 @@ const RegisterForm = () => {
 
   // ====== Validation Functions ======
   const validateEmail = (email: string): boolean => {
-    const re = /^[^\s@]+@[^\ s@]+\.[^\s@]+$/;
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email.trim());
   };
 
@@ -252,7 +252,7 @@ const RegisterForm = () => {
 
   const validateForm = (
     data: RegisterFormData,
-    t: any
+    t: any,
   ): Record<string, string> => {
     const errors: Record<string, string> = {};
 
@@ -328,7 +328,7 @@ const RegisterForm = () => {
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => {
     const { name, value, type } = e.target;
     const val =
@@ -349,7 +349,7 @@ const RegisterForm = () => {
   };
 
   const handleBlur = (
-    e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     if (!value.trim() && !errors[name as keyof RegisterFormData]) {
@@ -430,11 +430,11 @@ const RegisterForm = () => {
           }}
         />
       )}
-      <div className="min-h-screen bg-linear-to-br from-gray-900 via-[#111829] to-[#0d1420] py-8 px-4">
+      <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-indigo-50 py-8 px-4">
         {/* Animated Background */}
         <div className="fixed inset-0 overflow-hidden z-0">
-          <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-500/5 rounded-full mix-blend-screen filter blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-purple-500/5 rounded-full mix-blend-screen filter blur-3xl animate-pulse delay-1000"></div>
+          <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-sky-200/40 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-indigo-200/40 rounded-full mix-blend-multiply filter blur-3xl animate-pulse delay-1000"></div>
         </div>
 
         <div className="max-w-4xl mx-auto relative z-10">
@@ -443,32 +443,32 @@ const RegisterForm = () => {
             <button
               type="button"
               onClick={() => navigate("/sign-in")}
-              className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#172131] hover:bg-[#1a2438] text-gray-300 font-medium rounded-lg transition-all duration-200 border border-gray-800/50"
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-white/80 backdrop-blur-sm hover:bg-white text-gray-700 font-medium rounded-xl transition-all duration-200 shadow-sm border border-gray-200"
             >
               <ChevronLeft className="w-4 h-4" />
               {language === "th" ? "กลับ" : "Back"}
             </button>
-            <div className="inline-flex items-center bg-[#172131] rounded-lg border border-gray-800/50 p-1.5">
+            <div className="inline-flex items-center bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200 p-1.5 shadow-sm">
               <button
                 type="button"
                 onClick={() => setLanguage("th")}
-                className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 flex items-center gap-2 ${
+                className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 flex items-center gap-2 ${
                   language === "th"
-                    ? "bg-linear-to-r from-blue-600/30 to-purple-600/30 text-white"
-                    : "text-gray-400 hover:text-gray-300 hover:bg-gray-900/50"
+                    ? "bg-gradient-to-r from-sky-500 to-indigo-500 text-white shadow-sm"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                 }`}
               >
                 <Globe className="w-3 h-3" />
                 TH
               </button>
-              <div className="w-px h-4 bg-gray-800 mx-1"></div>
+              <div className="w-px h-4 bg-gray-200 mx-1"></div>
               <button
                 type="button"
                 onClick={() => setLanguage("en")}
-                className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 flex items-center gap-2 ${
+                className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 flex items-center gap-2 ${
                   language === "en"
-                    ? "bg-linear-to-r from-blue-600/30 to-purple-600/30 text-white"
-                    : "text-gray-400 hover:text-gray-300 hover:bg-gray-900/50"
+                    ? "bg-gradient-to-r from-sky-500 to-indigo-500 text-white shadow-sm"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                 }`}
               >
                 <Globe className="w-3 h-3" />
@@ -478,18 +478,18 @@ const RegisterForm = () => {
           </div>
 
           {/* Form Container */}
-          <div className="bg-[#161f2f] rounded-2xl border border-gray-800/50 shadow-2xl overflow-hidden">
+          <div className="bg-white/90 backdrop-blur-sm rounded-3xl border border-white/50 shadow-xl overflow-hidden">
             {/* Header */}
-            <div className="bg-linear-to-r from-[#172131] to-[#1a2438] px-6 sm:px-8 py-8 border-b border-gray-800/50">
+            <div className="bg-gradient-to-r from-sky-50 to-indigo-50 px-6 sm:px-8 py-8 border-b border-gray-100">
               <div className="flex items-center gap-4 mb-3">
-                <div className="p-2 bg-blue-900/20 rounded-lg border border-blue-800/30 backdrop-blur-sm">
-                  <FileText className="h-6 w-6 text-blue-400" />
+                <div className="p-2 bg-gradient-to-br from-sky-100 to-indigo-100 rounded-xl shadow-inner">
+                  <FileText className="h-6 w-6 text-sky-600" />
                 </div>
                 <div>
-                  <h1 className="text-xl sm:text-2xl font-bold text-white">
+                  <h1 className="text-xl sm:text-2xl font-bold text-gray-800">
                     {t.register}
                   </h1>
-                  <p className="text-gray-400 text-sm font-medium mt-1">
+                  <p className="text-gray-500 text-sm font-medium mt-1">
                     {language === "th"
                       ? "กรุณากรอกข้อมูลให้ครบถ้วนเพื่อสมัครสมาชิก"
                       : "Please complete all required fields to register"}
@@ -501,12 +501,12 @@ const RegisterForm = () => {
               <div className="flex items-center gap-4 mt-4">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                  <span className="text-xs text-gray-400">Secure Form</span>
+                  <span className="text-xs text-gray-500">Secure Form</span>
                 </div>
-                <div className="w-1 h-1 bg-gray-700 rounded-full"></div>
+                <div className="w-1 h-1 bg-gray-300 rounded-full"></div>
                 <div className="flex items-center gap-2">
-                  <Shield className="w-3 h-3 text-blue-400" />
-                  <span className="text-xs text-gray-400">256-bit SSL</span>
+                  <Shield className="w-3 h-3 text-sky-500" />
+                  <span className="text-xs text-gray-500">256-bit SSL</span>
                 </div>
               </div>
             </div>
@@ -514,9 +514,9 @@ const RegisterForm = () => {
             <form onSubmit={handleSubmit} className="p-4 sm:p-6 md:p-8">
               {/* User Type */}
               <div className="mb-8">
-                <div className="flex items-center gap-3 mb-4 pb-3 border-b border-gray-800/50">
-                  <div className="w-1.5 h-6 bg-linear-to-b from-blue-500 to-purple-500 rounded-full"></div>
-                  <h2 className="text-lg font-semibold text-gray-300">
+                <div className="flex items-center gap-3 mb-4 pb-3 border-b border-gray-100">
+                  <div className="w-1.5 h-6 bg-gradient-to-b from-sky-500 to-indigo-500 rounded-full"></div>
+                  <h2 className="text-lg font-semibold text-gray-700">
                     {t.userType}
                   </h2>
                 </div>
@@ -525,7 +525,7 @@ const RegisterForm = () => {
                   value={formData.userType}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  className="w-full p-3.5 bg-gray-900/50 border border-gray-800 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 text-gray-300 backdrop-blur-sm"
+                  className="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20 transition-all duration-200 text-gray-700"
                   required
                 >
                   <option value="student">{t.student}</option>
@@ -535,7 +535,7 @@ const RegisterForm = () => {
                   <option value="vet_tech">{t.vet_tech}</option>
                 </select>
                 {errors.userType && (
-                  <p className="text-red-400 text-xs mt-2 flex items-center gap-1">
+                  <p className="text-red-500 text-xs mt-2 flex items-center gap-1">
                     <AlertCircle className="w-3 h-3" />
                     {errors.userType}
                   </p>
@@ -544,22 +544,22 @@ const RegisterForm = () => {
 
               {/* Email */}
               <div className="mb-8">
-                <div className="flex items-center gap-3 mb-6 pb-3 border-b border-gray-800/50">
-                  <div className="p-2 bg-blue-900/20 rounded-lg border border-blue-800/30">
-                    <Mail className="h-5 w-5 text-blue-400" />
+                <div className="flex items-center gap-3 mb-6 pb-3 border-b border-gray-100">
+                  <div className="p-2 bg-sky-100 rounded-xl">
+                    <Mail className="h-5 w-5 text-sky-600" />
                   </div>
-                  <h2 className="text-lg font-semibold text-gray-300">
+                  <h2 className="text-lg font-semibold text-gray-700">
                     {language === "th" ? "ข้อมูลอีเมล" : "Email Information"}
                   </h2>
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-400 mb-2">
+                    <label className="block text-sm font-medium text-gray-600 mb-2">
                       {t.email} *
                     </label>
                     <div className="relative">
                       <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-                        <Mail className="h-5 w-5 text-gray-500" />
+                        <Mail className="h-5 w-5 text-gray-400" />
                       </div>
                       <input
                         type="email"
@@ -567,25 +567,25 @@ const RegisterForm = () => {
                         value={formData.email}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        className="w-full pl-12 p-3.5 bg-gray-900/50 border-2 border-gray-800 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 text-gray-300 placeholder:text-gray-500 backdrop-blur-sm"
+                        className="w-full pl-12 p-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20 transition-all duration-200 text-gray-700 placeholder:text-gray-400"
                         placeholder="example@email.com"
                         required
                       />
                     </div>
                     {errors.email && (
-                      <p className="text-red-400 text-xs mt-2 flex items-center gap-1">
+                      <p className="text-red-500 text-xs mt-2 flex items-center gap-1">
                         <AlertCircle className="w-3 h-3" />
                         {errors.email}
                       </p>
                     )}
                   </div>
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-400 mb-2">
+                    <label className="block text-sm font-medium text-gray-600 mb-2">
                       {t.confirmEmail} *
                     </label>
                     <div className="relative">
                       <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-                        <Mail className="h-5 w-5 text-gray-500" />
+                        <Mail className="h-5 w-5 text-gray-400" />
                       </div>
                       <input
                         type="email"
@@ -593,13 +593,13 @@ const RegisterForm = () => {
                         value={formData.confirmPasswordEmail}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        className="w-full pl-12 p-3.5 bg-gray-900/50 border-2 border-gray-800 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 text-gray-300 placeholder:text-gray-500 backdrop-blur-sm"
+                        className="w-full pl-12 p-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20 transition-all duration-200 text-gray-700 placeholder:text-gray-400"
                         placeholder="example@email.com"
                         required
                       />
                     </div>
                     {errors.confirmPasswordEmail && (
-                      <p className="text-red-400 text-xs mt-2 flex items-center gap-1">
+                      <p className="text-red-500 text-xs mt-2 flex items-center gap-1">
                         <AlertCircle className="w-3 h-3" />
                         {errors.confirmPasswordEmail}
                       </p>
@@ -610,23 +610,23 @@ const RegisterForm = () => {
 
               {/* Password */}
               <div className="mb-8">
-                <div className="flex items-center gap-3 mb-6 pb-3 border-b border-gray-800/50">
-                  <div className="p-2 bg-blue-900/20 rounded-lg border border-blue-800/30">
-                    <Lock className="h-5 w-5 text-blue-400" />
+                <div className="flex items-center gap-3 mb-6 pb-3 border-b border-gray-100">
+                  <div className="p-2 bg-indigo-100 rounded-xl">
+                    <Lock className="h-5 w-5 text-indigo-600" />
                   </div>
-                  <h2 className="text-lg font-semibold text-gray-300">
+                  <h2 className="text-lg font-semibold text-gray-700">
                     {language === "th" ? "รหัสผ่าน" : "Password"}
                   </h2>
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <label className="block text-sm font-medium text-gray-400 mb-2">
+                      <label className="block text-sm font-medium text-gray-600 mb-2">
                         {t.password} *
                       </label>
                       <div className="relative">
                         <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-                          <Lock className="h-5 w-5 text-gray-500" />
+                          <Lock className="h-5 w-5 text-gray-400" />
                         </div>
                         <input
                           type={showPassword ? "text" : "password"}
@@ -634,14 +634,14 @@ const RegisterForm = () => {
                           value={formData.password}
                           onChange={handleChange}
                           onBlur={handleBlur}
-                          className="w-full pl-12 pr-12 p-3.5 bg-gray-900/50 border-2 border-gray-800 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 text-gray-300 placeholder:text-gray-500 backdrop-blur-sm"
+                          className="w-full pl-12 pr-12 p-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-400/20 transition-all duration-200 text-gray-700 placeholder:text-gray-400"
                           placeholder="••••••••"
                           required
                         />
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
+                          className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                         >
                           {showPassword ? (
                             <EyeOff className="h-5 w-5" />
@@ -651,15 +651,15 @@ const RegisterForm = () => {
                         </button>
                       </div>
                       {errors.password && (
-                        <p className="text-red-400 text-xs mt-2 flex items-center gap-1">
+                        <p className="text-red-500 text-xs mt-2 flex items-center gap-1">
                           <AlertCircle className="w-3 h-3" />
                           {errors.password}
                         </p>
                       )}
                     </div>
                     {formData.password && (
-                      <div className="space-y-3 p-4 bg-gray-900/30 rounded-xl border border-gray-800/50 backdrop-blur-sm">
-                        <p className="text-sm font-semibold text-gray-300 mb-3">
+                      <div className="space-y-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                        <p className="text-sm font-semibold text-gray-600 mb-3">
                           {language === "th"
                             ? "เกณฑ์รหัสผ่าน"
                             : "Password Criteria"}
@@ -709,22 +709,22 @@ const RegisterForm = () => {
                               <div
                                 className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 border ${
                                   (passwordCriteria as any)[criterion.key]
-                                    ? "border-green-500/50 bg-green-900/20"
-                                    : "border-gray-700 bg-gray-900/50"
+                                    ? "border-emerald-400 bg-emerald-50"
+                                    : "border-gray-300 bg-gray-100"
                                 }`}
                               >
                                 <div
                                   className={`w-2 h-2 rounded-full ${
                                     (passwordCriteria as any)[criterion.key]
-                                      ? "bg-green-500"
-                                      : "bg-gray-600"
+                                      ? "bg-emerald-500"
+                                      : "bg-gray-400"
                                   }`}
                                 ></div>
                               </div>
                               <span
                                 className={`text-sm ${
                                   (passwordCriteria as any)[criterion.key]
-                                    ? "text-green-400 font-medium"
+                                    ? "text-emerald-700 font-medium"
                                     : "text-gray-500"
                                 }`}
                               >
@@ -737,12 +737,12 @@ const RegisterForm = () => {
                     )}
                   </div>
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-400 mb-2">
+                    <label className="block text-sm font-medium text-gray-600 mb-2">
                       {t.confirmPassword} *
                     </label>
                     <div className="relative">
                       <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-                        <Lock className="h-5 w-5 text-gray-500" />
+                        <Lock className="h-5 w-5 text-gray-400" />
                       </div>
                       <input
                         type={showConfirmPassword ? "text" : "password"}
@@ -750,7 +750,7 @@ const RegisterForm = () => {
                         value={formData.confirmPassword}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        className="w-full pl-12 pr-12 p-3.5 bg-gray-900/50 border-2 border-gray-800 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 text-gray-300 placeholder:text-gray-500 backdrop-blur-sm"
+                        className="w-full pl-12 pr-12 p-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:border-indigo-400 focus:ring-2 focus:ring-indigo-400/20 transition-all duration-200 text-gray-700 placeholder:text-gray-400"
                         placeholder="••••••••"
                         required
                       />
@@ -759,7 +759,7 @@ const RegisterForm = () => {
                         onClick={() =>
                           setShowConfirmPassword(!showConfirmPassword)
                         }
-                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                       >
                         {showConfirmPassword ? (
                           <EyeOff className="h-5 w-5" />
@@ -769,7 +769,7 @@ const RegisterForm = () => {
                       </button>
                     </div>
                     {errors.confirmPassword && (
-                      <p className="text-red-400 text-xs mt-2 flex items-center gap-1">
+                      <p className="text-red-500 text-xs mt-2 flex items-center gap-1">
                         <AlertCircle className="w-3 h-3" />
                         {errors.confirmPassword}
                       </p>
@@ -780,9 +780,9 @@ const RegisterForm = () => {
 
               {/* Personal Info */}
               <div className="mb-8">
-                <div className="flex items-center gap-3 mb-6 pb-3 border-b border-gray-800/50">
-                  <div className="w-1.5 h-6 bg-linear-to-b from-blue-500 to-purple-500 rounded-full"></div>
-                  <h2 className="text-lg font-semibold text-gray-300">
+                <div className="flex items-center gap-3 mb-6 pb-3 border-b border-gray-100">
+                  <div className="w-1.5 h-6 bg-gradient-to-b from-sky-500 to-indigo-500 rounded-full"></div>
+                  <h2 className="text-lg font-semibold text-gray-700">
                     {language === "th"
                       ? "ข้อมูลส่วนตัว"
                       : "Personal Information"}
@@ -790,7 +790,7 @@ const RegisterForm = () => {
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                   <div className="space-y-4">
-                    <h3 className="text-sm font-semibold text-gray-400 mb-2">
+                    <h3 className="text-sm font-semibold text-gray-500 mb-2">
                       {language === "th" ? "ภาษาไทย" : "Thai Language"}
                     </h3>
                     <div className="grid grid-cols-2 gap-4">
@@ -803,7 +803,7 @@ const RegisterForm = () => {
                           name="prefixTh"
                           value={formData.prefixTh}
                           onChange={handleChange}
-                          className="w-full p-3 bg-gray-900/50 border border-gray-800 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 text-gray-300"
+                          className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:border-sky-400 focus:ring-1 focus:ring-sky-400/20 text-gray-700"
                           placeholder={
                             language === "th" ? "คำนำหน้า" : "Prefix"
                           }
@@ -819,7 +819,7 @@ const RegisterForm = () => {
                           name="academicTitle"
                           value={formData.academicTitle}
                           onChange={handleChange}
-                          className="w-full p-3 bg-gray-900/50 border border-gray-800 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 text-gray-300"
+                          className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:border-sky-400 focus:ring-1 focus:ring-sky-400/20 text-gray-700"
                           placeholder={
                             language === "th"
                               ? "ตำแหน่งวิชาการ"
@@ -839,14 +839,14 @@ const RegisterForm = () => {
                           value={formData.firstNameTh}
                           onChange={handleChange}
                           onBlur={handleBlur}
-                          className="w-full p-3 bg-gray-900/50 border border-gray-800 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 text-gray-300"
+                          className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:border-sky-400 focus:ring-1 focus:ring-sky-400/20 text-gray-700"
                           placeholder={
                             language === "th" ? "ชื่อไทย" : "Thai First Name"
                           }
                           required
                         />
                         {errors.firstNameTh && (
-                          <p className="text-red-400 text-xs mt-1">
+                          <p className="text-red-500 text-xs mt-1">
                             {errors.firstNameTh}
                           </p>
                         )}
@@ -861,14 +861,14 @@ const RegisterForm = () => {
                           value={formData.lastNameTh}
                           onChange={handleChange}
                           onBlur={handleBlur}
-                          className="w-full p-3 bg-gray-900/50 border border-gray-800 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 text-gray-300"
+                          className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:border-sky-400 focus:ring-1 focus:ring-sky-400/20 text-gray-700"
                           placeholder={
                             language === "th" ? "นามสกุลไทย" : "Thai Last Name"
                           }
                           required
                         />
                         {errors.lastNameTh && (
-                          <p className="text-red-400 text-xs mt-1">
+                          <p className="text-red-500 text-xs mt-1">
                             {errors.lastNameTh}
                           </p>
                         )}
@@ -876,7 +876,7 @@ const RegisterForm = () => {
                     </div>
                   </div>
                   <div className="space-y-4">
-                    <h3 className="text-sm font-semibold text-gray-400 mb-2">
+                    <h3 className="text-sm font-semibold text-gray-500 mb-2">
                       {language === "th" ? "ภาษาอังกฤษ" : "English Language"} *
                     </h3>
                     <div className="grid grid-cols-2 gap-4">
@@ -890,7 +890,7 @@ const RegisterForm = () => {
                           value={formData.firstNameEn}
                           onChange={handleChange}
                           onBlur={handleBlur}
-                          className="w-full p-3 bg-gray-900/50 border border-gray-800 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 text-gray-300"
+                          className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:border-sky-400 focus:ring-1 focus:ring-sky-400/20 text-gray-700"
                           placeholder={
                             language === "th"
                               ? "ชื่ออังกฤษ"
@@ -899,7 +899,7 @@ const RegisterForm = () => {
                           required
                         />
                         {errors.firstNameEn && (
-                          <p className="text-red-400 text-xs mt-1">
+                          <p className="text-red-500 text-xs mt-1">
                             {errors.firstNameEn}
                           </p>
                         )}
@@ -914,7 +914,7 @@ const RegisterForm = () => {
                           value={formData.lastNameEn}
                           onChange={handleChange}
                           onBlur={handleBlur}
-                          className="w-full p-3 bg-gray-900/50 border border-gray-800 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 text-gray-300"
+                          className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:border-sky-400 focus:ring-1 focus:ring-sky-400/20 text-gray-700"
                           placeholder={
                             language === "th"
                               ? "นามสกุลอังกฤษ"
@@ -923,17 +923,17 @@ const RegisterForm = () => {
                           required
                         />
                         {errors.lastNameEn && (
-                          <p className="text-red-400 text-xs mt-1">
+                          <p className="text-red-500 text-xs mt-1">
                             {errors.lastNameEn}
                           </p>
                         )}
                       </div>
                     </div>
-                    <div className="mt-4 pt-4 border-t border-gray-800/50">
+                    <div className="mt-4 pt-4 border-t border-gray-100">
                       <label className="block text-xs font-medium text-gray-500">
                         {t.certificateName} *
                       </label>
-                      <div className="w-full p-3 bg-gray-900/30 border border-gray-800/50 rounded-lg text-gray-300 font-medium">
+                      <div className="w-full p-3 bg-gray-100/50 border border-gray-200 rounded-lg text-gray-700 font-medium">
                         {`${formData.firstNameEn} ${formData.lastNameEn}`.trim() ||
                           (language === "th"
                             ? "ชื่อที่แสดงบนใบเซอร์ติฟิเคต"
@@ -944,7 +944,7 @@ const RegisterForm = () => {
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-400">
+                    <label className="block text-sm font-medium text-gray-600">
                       {t.nationality} *
                     </label>
                     <input
@@ -953,20 +953,20 @@ const RegisterForm = () => {
                       value={formData.nationality}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      className="w-full p-3 bg-gray-900/50 border border-gray-800 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 text-gray-300"
+                      className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:border-sky-400 focus:ring-1 focus:ring-sky-400/20 text-gray-700"
                       placeholder={
                         language === "th" ? "สัญชาติ" : "Nationality"
                       }
                       required
                     />
                     {errors.nationality && (
-                      <p className="text-red-400 text-xs mt-1">
+                      <p className="text-red-500 text-xs mt-1">
                         {errors.nationality}
                       </p>
                     )}
                   </div>
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-400">
+                    <label className="block text-sm font-medium text-gray-600">
                       {t.ethnicity} *
                     </label>
                     <input
@@ -975,20 +975,20 @@ const RegisterForm = () => {
                       value={formData.ethnicity}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      className="w-full p-3 bg-gray-900/50 border border-gray-800 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 text-gray-300"
+                      className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:border-sky-400 focus:ring-1 focus:ring-sky-400/20 text-gray-700"
                       placeholder={
                         language === "th" ? "เชื้อชาติ" : "Ethnicity"
                       }
                       required
                     />
                     {errors.ethnicity && (
-                      <p className="text-red-400 text-xs mt-1">
+                      <p className="text-red-500 text-xs mt-1">
                         {errors.ethnicity}
                       </p>
                     )}
                   </div>
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-400">
+                    <label className="block text-sm font-medium text-gray-600">
                       {t.gender} *
                     </label>
                     <select
@@ -996,40 +996,31 @@ const RegisterForm = () => {
                       value={formData.gender}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      className="w-full p-3 bg-gray-900/50 border border-gray-800 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 text-gray-300"
+                      className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:border-sky-400 focus:ring-1 focus:ring-sky-400/20 text-gray-700"
                       required
                     >
-                      <option value="" className="bg-gray-900 text-gray-300">
+                      <option value="" className="text-gray-500">
                         {t.select}
                       </option>
-                      <option
-                        value="male"
-                        className="bg-gray-900 text-gray-300"
-                      >
+                      <option value="male" className="text-gray-700">
                         {t.male}
                       </option>
-                      <option
-                        value="female"
-                        className="bg-gray-900 text-gray-300"
-                      >
+                      <option value="female" className="text-gray-700">
                         {t.female}
                       </option>
-                      <option
-                        value="other"
-                        className="bg-gray-900 text-gray-300"
-                      >
+                      <option value="other" className="text-gray-700">
                         {t.other}
                       </option>
                     </select>
                     {errors.gender && (
-                      <p className="text-red-400 text-xs mt-1">
+                      <p className="text-red-500 text-xs mt-1">
                         {errors.gender}
                       </p>
                     )}
                   </div>
                 </div>
                 <div className="space-y-4 mb-6">
-                  <label className="block text-sm font-medium text-gray-400">
+                  <label className="block text-sm font-medium text-gray-600">
                     {t.address} *
                   </label>
                   <textarea
@@ -1037,7 +1028,7 @@ const RegisterForm = () => {
                     value={formData.address}
                     onChange={handleChange}
                     rows={3}
-                    className="w-full p-3 bg-gray-900/50 border border-gray-800 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 text-gray-300 resize-none"
+                    className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:border-sky-400 focus:ring-1 focus:ring-sky-400/20 text-gray-700 resize-none"
                     placeholder={
                       language === "th"
                         ? "ที่อยู่ออกใบเสร็จ"
@@ -1046,7 +1037,7 @@ const RegisterForm = () => {
                     required
                   />
                   {errors.address && (
-                    <p className="text-red-400 text-xs mt-1">
+                    <p className="text-red-500 text-xs mt-1">
                       {errors.address}
                     </p>
                   )}
@@ -1059,12 +1050,12 @@ const RegisterForm = () => {
                         value={formData.subdistrict}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        className="w-full p-3 bg-gray-900/50 border border-gray-800 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 text-gray-300"
+                        className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:border-sky-400 focus:ring-1 focus:ring-sky-400/20 text-gray-700"
                         placeholder={t.subdistrict}
                         required
                       />
                       {errors.subdistrict && (
-                        <p className="text-red-400 text-xs mt-1">
+                        <p className="text-red-500 text-xs mt-1">
                           {errors.subdistrict}
                         </p>
                       )}
@@ -1076,12 +1067,12 @@ const RegisterForm = () => {
                         value={formData.district}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        className="w-full p-3 bg-gray-900/50 border border-gray-800 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 text-gray-300"
+                        className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:border-sky-400 focus:ring-1 focus:ring-sky-400/20 text-gray-700"
                         placeholder={t.district}
                         required
                       />
                       {errors.district && (
-                        <p className="text-red-400 text-xs mt-1">
+                        <p className="text-red-500 text-xs mt-1">
                           {errors.district}
                         </p>
                       )}
@@ -1093,12 +1084,12 @@ const RegisterForm = () => {
                         value={formData.province}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        className="w-full p-3 bg-gray-900/50 border border-gray-800 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 text-gray-300"
+                        className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:border-sky-400 focus:ring-1 focus:ring-sky-400/20 text-gray-700"
                         placeholder={t.province}
                         required
                       />
                       {errors.province && (
-                        <p className="text-red-400 text-xs mt-1">
+                        <p className="text-red-500 text-xs mt-1">
                           {errors.province}
                         </p>
                       )}
@@ -1110,12 +1101,12 @@ const RegisterForm = () => {
                         value={formData.postalCode}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        className="w-full p-3 bg-gray-900/50 border border-gray-800 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 text-gray-300"
+                        className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:border-sky-400 focus:ring-1 focus:ring-sky-400/20 text-gray-700"
                         placeholder={t.postalCode}
                         required
                       />
                       {errors.postalCode && (
-                        <p className="text-red-400 text-xs mt-1">
+                        <p className="text-red-500 text-xs mt-1">
                           {errors.postalCode}
                         </p>
                       )}
@@ -1123,12 +1114,12 @@ const RegisterForm = () => {
                   </div>
                 </div>
                 {formData.userType === "veterinarian" && (
-                  <div className="mt-6 pt-6 border-t border-gray-800/50">
+                  <div className="mt-6 pt-6 border-t border-gray-100">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="p-2 bg-yellow-900/20 rounded-lg border border-yellow-800/30">
-                        <FileText className="h-5 w-5 text-yellow-400" />
+                      <div className="p-2 bg-amber-100 rounded-xl">
+                        <FileText className="h-5 w-5 text-amber-600" />
                       </div>
-                      <h3 className="text-base font-semibold text-gray-300">
+                      <h3 className="text-base font-semibold text-gray-700">
                         {t.licenseNumber} *
                       </h3>
                     </div>
@@ -1138,10 +1129,10 @@ const RegisterForm = () => {
                       value={formData.licenseNumber}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      className={`w-full p-3.5 bg-gray-900/50 border-2 rounded-xl transition-all duration-200 text-gray-300 backdrop-blur-sm ${
+                      className={`w-full p-3.5 bg-gray-50 border rounded-xl transition-all duration-200 text-gray-700 ${
                         !isLicenseValid && formData.licenseNumber
-                          ? "border-red-500 focus:ring-red-500/20 focus:border-red-500"
-                          : "border-gray-800 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20"
+                          ? "border-red-400 focus:ring-red-400/20 focus:border-red-400"
+                          : "border-gray-200 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20"
                       }`}
                       placeholder={
                         language === "th"
@@ -1150,13 +1141,13 @@ const RegisterForm = () => {
                       }
                       required
                     />
-                    <div className="mt-2 text-xs text-gray-500">
+                    <div className="mt-2 text-xs text-gray-400">
                       {language === "th"
                         ? "รูปแบบ: [รหัส]-[เลขทะเบียน]/[ปี พ.ศ. 4 หลัก]"
                         : "Format: [code]-[number]/[4-digit year]"}
                     </div>
                     {errors.licenseNumber && (
-                      <p className="text-red-400 text-xs mt-2 flex items-center gap-1">
+                      <p className="text-red-500 text-xs mt-2 flex items-center gap-1">
                         <AlertCircle className="w-3 h-3" />
                         {errors.licenseNumber}
                       </p>
@@ -1167,11 +1158,11 @@ const RegisterForm = () => {
 
               {/* Education & Work */}
               <div className="mb-8">
-                <div className="flex items-center gap-3 mb-6 pb-3 border-b border-gray-800/50">
-                  <div className="p-2 bg-purple-900/20 rounded-lg border border-purple-800/30">
-                    <GraduationCap className="h-5 w-5 text-purple-400" />
+                <div className="flex items-center gap-3 mb-6 pb-3 border-b border-gray-100">
+                  <div className="p-2 bg-purple-100 rounded-xl">
+                    <GraduationCap className="h-5 w-5 text-purple-600" />
                   </div>
-                  <h2 className="text-lg font-semibold text-gray-300">
+                  <h2 className="text-lg font-semibold text-gray-700">
                     {language === "th"
                       ? "การศึกษาและการทำงาน"
                       : "Education & Work"}
@@ -1179,19 +1170,19 @@ const RegisterForm = () => {
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-400">
+                    <label className="block text-sm font-medium text-gray-600">
                       {t.university}
                     </label>
                     <div className="relative">
                       <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-                        <GraduationCap className="h-5 w-5 text-gray-500" />
+                        <GraduationCap className="h-5 w-5 text-gray-400" />
                       </div>
                       <input
                         type="text"
                         name="university"
                         value={formData.university}
                         onChange={handleChange}
-                        className="w-full pl-12 p-3.5 bg-gray-900/50 border-2 border-gray-800 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 text-gray-300 backdrop-blur-sm"
+                        className="w-full pl-12 p-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 text-gray-700"
                         placeholder={
                           language === "th" ? "มหาวิทยาลัยที่จบ" : "University"
                         }
@@ -1199,19 +1190,19 @@ const RegisterForm = () => {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-400">
+                    <label className="block text-sm font-medium text-gray-600">
                       {t.graduationYear}
                     </label>
                     <div className="relative">
                       <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-                        <Calendar className="h-5 w-5 text-gray-500" />
+                        <Calendar className="h-5 w-5 text-gray-400" />
                       </div>
                       <input
                         type="text"
                         name="graduationYear"
                         value={formData.graduationYear}
                         onChange={handleChange}
-                        className="w-full pl-12 p-3.5 bg-gray-900/50 border-2 border-gray-800 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 text-gray-300 backdrop-blur-sm"
+                        className="w-full pl-12 p-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 text-gray-700"
                         placeholder={
                           language === "th"
                             ? "ปีที่จบการศึกษา"
@@ -1223,19 +1214,19 @@ const RegisterForm = () => {
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-400">
+                    <label className="block text-sm font-medium text-gray-600">
                       {t.workplace}
                     </label>
                     <div className="relative">
                       <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-                        <Building className="h-5 w-5 text-gray-500" />
+                        <Building className="h-5 w-5 text-gray-400" />
                       </div>
                       <input
                         type="text"
                         name="workplace"
                         value={formData.workplace}
                         onChange={handleChange}
-                        className="w-full pl-12 p-3.5 bg-gray-900/50 border-2 border-gray-800 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 text-gray-300 backdrop-blur-sm"
+                        className="w-full pl-12 p-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 text-gray-700"
                         placeholder={
                           language === "th" ? "สถานที่ทำงาน" : "Workplace"
                         }
@@ -1243,19 +1234,19 @@ const RegisterForm = () => {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-400">
+                    <label className="block text-sm font-medium text-gray-600">
                       {t.workProvince}
                     </label>
                     <div className="relative">
                       <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-                        <MapPin className="h-5 w-5 text-gray-500" />
+                        <MapPin className="h-5 w-5 text-gray-400" />
                       </div>
                       <input
                         type="text"
                         name="workProvince"
                         value={formData.workProvince}
                         onChange={handleChange}
-                        className="w-full pl-12 p-3.5 bg-gray-900/50 border-2 border-gray-800 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 text-gray-300 backdrop-blur-sm"
+                        className="w-full pl-12 p-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 text-gray-700"
                         placeholder={
                           language === "th"
                             ? "จังหวัดที่ทำงาน"
@@ -1269,11 +1260,11 @@ const RegisterForm = () => {
 
               {/* Contact & Preferences */}
               <div className="mb-8">
-                <div className="flex items-center gap-3 mb-6 pb-3 border-b border-gray-800/50">
-                  <div className="p-2 bg-emerald-900/20 rounded-lg border border-emerald-800/30">
-                    <Phone className="h-5 w-5 text-emerald-400" />
+                <div className="flex items-center gap-3 mb-6 pb-3 border-b border-gray-100">
+                  <div className="p-2 bg-emerald-100 rounded-xl">
+                    <Phone className="h-5 w-5 text-emerald-600" />
                   </div>
-                  <h2 className="text-lg font-semibold text-gray-300">
+                  <h2 className="text-lg font-semibold text-gray-700">
                     {language === "th"
                       ? "ติดต่อและความต้องการ"
                       : "Contact & Preferences"}
@@ -1281,12 +1272,12 @@ const RegisterForm = () => {
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-400">
+                    <label className="block text-sm font-medium text-gray-600">
                       {t.mobile} *
                     </label>
                     <div className="relative">
                       <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-                        <Phone className="h-5 w-5 text-gray-500" />
+                        <Phone className="h-5 w-5 text-gray-400" />
                       </div>
                       <input
                         type="tel"
@@ -1294,7 +1285,7 @@ const RegisterForm = () => {
                         value={formData.mobile}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        className="w-full pl-12 p-3.5 bg-gray-900/50 border-2 border-gray-800 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-gray-300 backdrop-blur-sm"
+                        className="w-full pl-12 p-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20 text-gray-700"
                         placeholder={
                           language === "th" ? "เบอร์มือถือ" : "Mobile Number"
                         }
@@ -1302,31 +1293,31 @@ const RegisterForm = () => {
                       />
                     </div>
                     {errors.mobile && (
-                      <p className="text-red-400 text-xs mt-2">
+                      <p className="text-red-500 text-xs mt-2">
                         {errors.mobile}
                       </p>
                     )}
                   </div>
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-400">
+                    <label className="block text-sm font-medium text-gray-600">
                       {t.lineId}
                     </label>
                     <div className="relative">
                       <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-                        <MessageCircle className="h-5 w-5 text-gray-500" />
+                        <MessageCircle className="h-5 w-5 text-gray-400" />
                       </div>
                       <input
                         type="text"
                         name="lineId"
                         value={formData.lineId}
                         onChange={handleChange}
-                        className="w-full pl-12 p-3.5 bg-gray-900/50 border-2 border-gray-800 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-gray-300 backdrop-blur-sm"
+                        className="w-full pl-12 p-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20 text-gray-700"
                         placeholder={language === "th" ? "ไลน์ไอดี" : "LINE ID"}
                       />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-400">
+                    <label className="block text-sm font-medium text-gray-600">
                       {t.dietaryPreference} *
                     </label>
                     <select
@@ -1334,27 +1325,21 @@ const RegisterForm = () => {
                       value={formData.dietaryPreference}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      className="w-full p-3.5 bg-gray-900/50 border-2 border-gray-800 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-gray-300"
+                      className="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20 text-gray-700"
                       required
                     >
-                      <option value="" className="bg-gray-900 text-gray-300">
+                      <option value="" className="text-gray-500">
                         {t.select}
                       </option>
-                      <option
-                        value="general"
-                        className="bg-gray-900 text-gray-300"
-                      >
+                      <option value="general" className="text-gray-700">
                         {t.general}
                       </option>
-                      <option
-                        value="vegetarian"
-                        className="bg-gray-900 text-gray-300"
-                      >
+                      <option value="vegetarian" className="text-gray-700">
                         {t.vegetarian}
                       </option>
                     </select>
                     {errors.dietaryPreference && (
-                      <p className="text-red-400 text-xs mt-2">
+                      <p className="text-red-500 text-xs mt-2">
                         {errors.dietaryPreference}
                       </p>
                     )}
@@ -1364,7 +1349,7 @@ const RegisterForm = () => {
 
               {/* Agreement */}
 
-              <div className="mb-8 p-6 bg-gray-900/30 rounded-2xl border border-gray-800/50 backdrop-blur-sm">
+              <div className="mb-8 p-6 bg-gray-50 rounded-2xl border border-gray-100">
                 <div className="flex items-start gap-4">
                   <div className="relative">
                     <input
@@ -1373,7 +1358,7 @@ const RegisterForm = () => {
                       checked={formData.agreeTerms}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      className="w-5 h-5 bg-gray-900 border-2 border-gray-700 rounded focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 checked:bg-blue-600 checked:border-blue-600"
+                      className="w-5 h-5 bg-white border-2 border-gray-300 rounded focus:ring-2 focus:ring-sky-400/20 focus:border-sky-400 checked:bg-sky-500 checked:border-sky-500"
                       required
                     />
                     {formData.agreeTerms && (
@@ -1381,12 +1366,12 @@ const RegisterForm = () => {
                     )}
                   </div>
                   <div>
-                    <label className="text-sm text-gray-400">
+                    <label className="text-sm text-gray-600">
                       {t.agreeTerms}{" "}
                       <button
                         type="button"
                         onClick={() => setShowPolicy(true)}
-                        className="text-blue-400 hover:text-blue-300 font-medium underline transition-colors"
+                        className="text-sky-600 hover:text-sky-500 font-medium underline transition-colors"
                       >
                         {language === "th"
                           ? "ข้อตกลงและนโยบายความเป็นส่วนตัว"
@@ -1394,7 +1379,7 @@ const RegisterForm = () => {
                       </button>
                     </label>
                     {errors.agreeTerms && (
-                      <p className="text-red-400 text-xs mt-2 flex items-center gap-1">
+                      <p className="text-red-500 text-xs mt-2 flex items-center gap-1">
                         <AlertCircle className="w-3 h-3" />
                         {errors.agreeTerms}
                       </p>
@@ -1410,13 +1395,13 @@ const RegisterForm = () => {
                   disabled={isLoading}
                   className={`w-full py-4 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg relative overflow-hidden group ${
                     isLoading
-                      ? "bg-gray-800 cursor-not-allowed"
-                      : "bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 hover:shadow-xl"
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 hover:shadow-xl"
                   }`}
                 >
                   {/* Animated shine effect */}
                   <div className="absolute inset-0 overflow-hidden rounded-xl">
-                    <div className="absolute -inset-100% bg-linear-to-r from-transparent via-white/10 to-transparent group-hover:translate-x-100% transition-transform duration-700"></div>
+                    <div className="absolute -inset-100% bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:translate-x-100% transition-transform duration-700"></div>
                   </div>
 
                   <div className="relative flex items-center justify-center gap-3">
@@ -1438,9 +1423,9 @@ const RegisterForm = () => {
                   </div>
                 </button>
               ) : (
-                <div className="w-full py-4 flex items-center justify-center gap-3 bg-linear-to-r from-green-900/20 to-emerald-900/20 border border-emerald-800/50 rounded-xl">
-                  <CheckCircle className="w-5 h-5 text-emerald-400" />
-                  <span className="text-emerald-300 font-medium">
+                <div className="w-full py-4 flex items-center justify-center gap-3 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl">
+                  <CheckCircle className="w-5 h-5 text-emerald-600" />
+                  <span className="text-emerald-700 font-medium">
                     {language === "th"
                       ? "ส่งอีเมล์ยืนยันสำเร็จ กำลังนำทางไปหน้าเข้าสู่ระบบ..."
                       : "Registration successful! Redirecting to login..."}
@@ -1449,19 +1434,19 @@ const RegisterForm = () => {
               )}
 
               {/* Security Footer */}
-              <div className="flex items-center justify-center gap-4 mt-6 pt-6 border-t border-gray-800/50">
+              <div className="flex flex-wrap items-center justify-center gap-4 mt-6 pt-6 border-t border-gray-100">
                 <div className="flex items-center gap-2">
-                  <Database className="w-3 h-3 text-blue-400" />
+                  <Database className="w-3 h-3 text-sky-500" />
                   <span className="text-xs text-gray-500">Data Encrypted</span>
                 </div>
-                <div className="w-1 h-1 bg-gray-700 rounded-full"></div>
+                <div className="w-1 h-1 bg-gray-300 rounded-full"></div>
                 <div className="flex items-center gap-2">
-                  <Fingerprint className="w-3 h-3 text-purple-400" />
+                  <Fingerprint className="w-3 h-3 text-indigo-500" />
                   <span className="text-xs text-gray-500">Secure Auth</span>
                 </div>
-                <div className="w-1 h-1 bg-gray-700 rounded-full"></div>
+                <div className="w-1 h-1 bg-gray-300 rounded-full"></div>
                 <div className="flex items-center gap-2">
-                  <Shield className="w-3 h-3 text-green-400" />
+                  <Shield className="w-3 h-3 text-emerald-500" />
                   <span className="text-xs text-gray-500">PDPA Compliant</span>
                 </div>
               </div>

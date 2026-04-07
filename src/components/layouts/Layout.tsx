@@ -28,7 +28,7 @@ const Layout = () => {
   // }
 
   return (
-    <div className="min-h-screen flex flex-col  bg-linear-to-br from-gray-900 via-[#111829] to-[#0d1420]">
+    <div className="min-h-screen flex flex-col  bg-linear-to-br from-gray-200 via-[#fcfdff] to-[#e7ecf4]">
       <Header
         onOpenSlideMenu={openSidebar}
         user={userProfile}

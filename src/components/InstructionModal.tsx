@@ -6,12 +6,10 @@ interface InstructionModalProps {
 }
 
 export default function InstructionModal({ onClose }: InstructionModalProps) {
-  //   const [isAccepted, setIsAccepted] = useState(false);
   const [hasScrolledToBottom, setHasScrolledToBottom] = useState(false);
   const [hideForever, setHideForever] = useState(false);
   const scrollContentRef = useRef<HTMLDivElement>(null);
 
-  // Check localStorage on mount
   useEffect(() => {
     const hideModal = localStorage.getItem("hide_instruction_modal");
     if (hideModal === "true") {
@@ -19,12 +17,10 @@ export default function InstructionModal({ onClose }: InstructionModalProps) {
     }
   }, [onClose]);
 
-  // Scroll tracking handler
   const handleScroll = () => {
     const element = scrollContentRef.current;
     if (element) {
       const { scrollTop, clientHeight, scrollHeight } = element;
-      // Enable button when user has scrolled to bottom (with 5px tolerance)
       setHasScrolledToBottom(scrollTop + clientHeight >= scrollHeight - 5);
     }
   };
@@ -37,219 +33,133 @@ export default function InstructionModal({ onClose }: InstructionModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm overflow-y-auto">
-      {/* Modal Container - Responsive sizing */}
-      <div className="w-full max-w-2xl mx-4 sm:mx-6 md:mx-8 lg:mx-auto my-6 sm:my-8 md:my-12">
-        <div className="relative bg-[#161f2f] rounded-2xl sm:rounded-3xl border border-gray-800/50 shadow-2xl overflow-hidden animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md overflow-y-auto p-4">
+      <div className="w-full max-w-2xl mx-auto my-auto">
+        <div className="relative bg-white rounded-3xl border border-gray-200 shadow-2xl overflow-hidden animate-fadeIn flex flex-col max-h-[90vh]">
           {/* Header */}
-          <div className="bg-linear-to-r from-blue-600/20 to-cyan-500/20 border-b border-gray-800/50 p-5 sm:p-6 md:p-7">
+          <div className="bg-slate-50 border-b border-gray-100 p-6 sm:p-8 shrink-0">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 sm:p-3 bg-blue-500/20 rounded-xl">
-                  <CheckCircle className="w-6 h-6 sm:w-7 sm:h-7 text-blue-400" />
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-blue-100 rounded-2xl">
+                  <CheckCircle className="w-6 h-6 text-blue-600" />
                 </div>
-                <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-white">
-                  คู่มือการใช้งานและติดตั้งระบบ
-                </h2>
+                <div>
+                  <h2 className="text-xl sm:text-2xl font-black text-gray-900 leading-tight">
+                    คู่มือการใช้งาน
+                  </h2>
+                  <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">User Manual & Guide</p>
+                </div>
               </div>
               <button
                 onClick={onClose}
-                className="p-2 hover:bg-gray-800/50 rounded-lg transition-colors"
-                aria-label="Close modal"
+                className="p-2 hover:bg-gray-200 rounded-xl transition-all"
               >
-                <X className="w-5 h-5 sm:w-6 sm:h-6 text-gray-300 hover:text-gray-100" />
+                <X className="w-6 h-6 text-gray-400" />
               </button>
             </div>
           </div>
 
-          {/* Scrollable Content - Responsive height */}
+          {/* Scrollable Content */}
           <div
             ref={scrollContentRef}
             onScroll={handleScroll}
-            className="max-h-[45vh] sm:max-h-[50vh] md:max-h-[55vh] lg:max-h-[60vh] overflow-y-auto p-4 sm:p-5 md:p-6 space-y-5 sm:space-y-6 custom-scrollbar"
+            className="overflow-y-auto p-6 sm:p-8 space-y-8 sidebar-scrollbar"
           >
-            {/* Section 1: การใช้งาน */}
-            <div className="space-y-3">
-              <div className="flex items-start gap-3">
-                <div className="mt-1 p-2 bg-blue-500/10 rounded-lg shrink-0">
-                  <Camera className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-base sm:text-lg md:text-xl font-semibold text-white mb-2">
-                    1. การใช้งานระบบสแกน QR Code เพื่อเข้าร่วมสัมมนา
-                  </h3>
-                  <ul className="space-y-2 sm:space-y-2.5 text-gray-300 text-sm sm:text-base">
-                    <li className="flex items-start gap-2">
-                      <span className="text-blue-400 mt-1 shrink-0">•</span>
-                      <span>สมัครสมาชิกผ่านหน้าลงทะเบียน</span>
+            {/* Section 1 */}
+            <div className="flex gap-5">
+              <div className="shrink-0 w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center border border-blue-100">
+                <Camera className="w-6 h-6 text-blue-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-black text-gray-900 mb-3 leading-snug">
+                  1. การใช้งานระบบสแกนเข้าร่วมสัมมนา
+                </h3>
+                <ul className="space-y-3">
+                  {[
+                    "สมัครสมาชิกผ่านหน้าลงทะเบียน",
+                    "ล็อกอินด้วยอีเมลและรหัสผ่าน",
+                    "กดปุ่ม 'สแกน QR Code' ในหน้าโปรเจค",
+                    "อนุญาตการเข้าถึงกล้องเมื่อระบบร้องขอ"
+                  ].map((text, i) => (
+                    <li key={i} className="flex items-start gap-3 text-gray-600 font-medium text-sm">
+                      <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1.5 shrink-0"></span>
+                      {text}
                     </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
 
-                    <li className="flex items-start gap-2">
-                      <span className="text-blue-400 mt-1 shrink-0">•</span>
-                      <span>ล็อกอินด้วยอีเมลและรหัสผ่าน</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-blue-400 mt-1 shrink-0">•</span>
-                      <span>กดแสกน QR Code สำหรับการเข้าถึงฟีเจอร์กล้อง</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-blue-400 mt-1 shrink-0">•</span>
-                      <span>อนุญาตการใช้งานกล้องเมื่อระบบขออนุญาต</span>
-                    </li>
-                  </ul>
+            <div className="h-px bg-gray-50"></div>
+
+            {/* Section 2 */}
+            <div className="flex gap-5">
+              <div className="shrink-0 w-12 h-12 bg-purple-50 rounded-2xl flex items-center justify-center border border-purple-100">
+                <Smartphone className="w-6 h-6 text-purple-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-black text-gray-900 mb-3 leading-snug">
+                  2. วิธีติดตั้งเป็นแอป (PWA)
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <p className="text-[10px] font-black text-purple-600 uppercase tracking-widest">For iOS (Safari)</p>
+                    <ol className="text-xs text-gray-500 font-bold space-y-1.5">
+                      <li>1. กดปุ่ม 'แชร์' (Share)</li>
+                      <li>2. เลือก 'เพิ่มไปยังหน้าจอโฮม'</li>
+                    </ol>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest">For Android (Chrome)</p>
+                    <ol className="text-xs text-gray-500 font-bold space-y-1.5">
+                      <li>1. กดปุ่ม 'สามจุด' (⋮)</li>
+                      <li>2. เลือก 'ติดตั้งแอป'</li>
+                    </ol>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Divider */}
-            <div className="h-px bg-gray-800/50"></div>
-
-            {/* Section 2: PWA iOS */}
-            <div className="space-y-3">
-              <div className="flex items-start gap-3">
-                <div className="mt-1 p-2 bg-purple-500/10 rounded-lg shrink-0">
-                  <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 text-purple-400" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-base sm:text-lg md:text-xl font-semibold text-white mb-2">
-                    2. ติดตั้งเป็นแอป (iOS)
-                  </h3>
-                  <ol className="space-y-2 sm:space-y-2.5 text-gray-300 text-sm sm:text-base">
-                    <li className="flex items-start gap-2">
-                      <span className="text-purple-400 font-medium mt-1 shrink-0">
-                        1.
-                      </span>
-                      <span>เปิด Safari และเข้าเว็บไซต์</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-purple-400 font-medium mt-1 shrink-0">
-                        2.
-                      </span>
-                      <span>กดปุ่ม Share (ไอคอนสี่เหลี่ยมพร้อมลูกศรขึ้น)</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-purple-400 font-medium mt-1 shrink-0">
-                        3.
-                      </span>
-                      <span>เลื่อนลงและเลือก "Add to Home Screen"</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-purple-400 font-medium mt-1 shrink-0">
-                        4.
-                      </span>
-                      <span>กด "Add" เพื่อยืนยัน</span>
-                    </li>
-                  </ol>
-                </div>
-              </div>
-            </div>
-
-            {/* Divider */}
-            <div className="h-px bg-gray-800/50"></div>
-
-            {/* Section 3: PWA Android */}
-            <div className="space-y-3">
-              <div className="flex items-start gap-3">
-                <div className="mt-1 p-2 bg-cyan-500/10 rounded-lg shrink-0">
-                  <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 text-cyan-400" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-base sm:text-lg md:text-xl font-semibold text-white mb-2">
-                    3. ติดตั้งเป็นแอป (Android)
-                  </h3>
-                  <ol className="space-y-2 sm:space-y-2.5 text-gray-300 text-sm sm:text-base">
-                    <li className="flex items-start gap-2">
-                      <span className="text-cyan-400 font-medium mt-1 shrink-0">
-                        1.
-                      </span>
-                      <span>เปิด Chrome และเข้าเว็บไซต์</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-cyan-400 font-medium mt-1 shrink-0">
-                        2.
-                      </span>
-                      <span>กดปุ่มสามจุด (⋮) มุมขวาบน</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-cyan-400 font-medium mt-1 shrink-0">
-                        3.
-                      </span>
-                      <span>เลือก "Install app" หรือ "Add to Home Screen"</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-cyan-400 font-medium mt-1 shrink-0">
-                        4.
-                      </span>
-                      <span>กด "Install" เพื่อยืนยัน</span>
-                    </li>
-                  </ol>
-                </div>
-              </div>
-            </div>
-
-            {/* Note */}
-            <div className="bg-blue-500/5 border border-blue-500/20 rounded-lg p-3 sm:p-4">
-              <p className="text-xs sm:text-sm text-blue-300">
-                <span className="font-semibold">หมายเหตุ:</span>{" "}
-                การติดตั้งเป็นแอปจะช่วยให้เข้าถึงระบบได้สะดวกขึ้น
+            <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-4">
+              <p className="text-xs text-blue-700 font-bold leading-relaxed">
+                <span className="bg-blue-600 text-white px-1.5 py-0.5 rounded text-[10px] mr-1.5">TIP</span>
+                การติดตั้งแอปจะช่วยให้การแจ้งเตือนและการทำงานรวดเร็วยิ่งขึ้น
               </p>
             </div>
           </div>
 
           {/* Footer */}
-          <div className="border-t border-gray-800/50 p-4 sm:p-5 md:p-6 space-y-3 sm:space-y-4">
-            {/* Checkbox */}
-            <div className="flex items-center">
-              <label className="flex items-center cursor-pointer group w-full">
-                <div className="relative">
-                  <input
-                    type="checkbox"
-                    checked={hideForever}
-                    onChange={(e) => setHideForever(e.target.checked)}
-                    className="sr-only"
-                  />
-                  <div
-                    className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
-                      hideForever
-                        ? "bg-blue-500 border-blue-500"
-                        : "border-gray-600 hover:border-gray-400"
-                    }`}
-                  >
-                    {hideForever && (
-                      <CheckCircle className="w-3 h-3 text-white" />
-                    )}
-                  </div>
+          <div className="bg-slate-50 border-t border-gray-100 p-6 sm:p-8 space-y-4 shrink-0">
+            <label className="flex items-center gap-3 cursor-pointer group w-fit">
+              <div className="relative">
+                <input
+                  type="checkbox"
+                  checked={hideForever}
+                  onChange={(e) => setHideForever(e.target.checked)}
+                  className="sr-only"
+                />
+                <div className={`w-6 h-6 rounded-lg border-2 transition-all flex items-center justify-center ${hideForever ? 'bg-blue-600 border-blue-600 shadow-lg shadow-blue-600/20' : 'bg-white border-gray-200 group-hover:border-blue-400'}`}>
+                  {hideForever && <CheckCircle className="w-4 h-4 text-white" />}
                 </div>
-                <span className="ml-3 text-sm sm:text-base text-gray-300 group-hover:text-gray-200 transition-colors">
-                  ไม่ต้องแสดงหน้านี้อีก
-                </span>
-              </label>
-            </div>
-
-            {/* Accept Button */}
-            <button
-              onClick={handleAccept}
-              disabled={!hasScrolledToBottom}
-              className={`w-full py-3 px-4 rounded-xl sm:rounded-2xl font-semibold text-white transition-all duration-300 transform ${
-                hasScrolledToBottom
-                  ? "bg-linear-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 hover:-translate-y-0.5 shadow-lg hover:shadow-xl"
-                  : "bg-gray-700/50 cursor-not-allowed opacity-60"
-              }`}
-            >
-              <div className="flex items-center justify-center gap-2">
-                <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6" />
-                <span className="text-base sm:text-lg">
-                  ยอมรับและเริ่มใช้งาน
-                </span>
               </div>
-            </button>
+              <span className="text-sm font-bold text-gray-500 group-hover:text-gray-900 transition-colors">ไม่ต้องแสดงหน้าต่างนี้อีก</span>
+            </label>
 
-            {/* Scroll hint */}
-            {!hasScrolledToBottom && (
-              <p className="text-center text-xs sm:text-sm text-gray-500 animate-bounce">
-                ⬇️ กรุณาเลื่อนอ่านจนจบเพื่อดำเนินการต่อ
-              </p>
-            )}
+            <div className="relative">
+              <button
+                onClick={handleAccept}
+                disabled={!hasScrolledToBottom}
+                className={`w-full py-4 rounded-2xl font-black text-white transition-all shadow-lg ${hasScrolledToBottom ? 'bg-linear-to-r from-blue-600 to-indigo-600 hover:scale-[1.02] shadow-blue-500/25 active:scale-95' : 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'}`}
+              >
+                ยอมรับและเริ่มใช้งาน
+              </button>
+              
+              {!hasScrolledToBottom && (
+                <div className="absolute -top-10 left-1/2 -translate-x-1/2 animate-bounce bg-white border border-gray-100 px-3 py-1 rounded-full shadow-sm">
+                  <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest whitespace-nowrap">⬇️ กรุณาเลื่อนลงให้สุด</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
