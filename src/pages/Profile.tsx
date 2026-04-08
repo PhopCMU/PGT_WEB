@@ -170,35 +170,32 @@ export default function UserProfilePage() {
   const inputClass = (editable: boolean) =>
     `w-full px-3 sm:px-4 py-2.5 sm:py-3 border rounded-lg text-sm sm:text-base transition-all duration-200 ${
       editable
-        ? "bg-[#172131] border-gray-600 text-white placeholder-gray-500 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 hover:border-gray-500"
-        : "bg-[#111829] border-gray-700 text-gray-500 cursor-not-allowed"
+        ? "bg-white border-gray-300 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-400"
+        : "bg-gray-50 border-gray-200 text-gray-500 cursor-not-allowed"
     }`;
 
-  {
-    /* Loading State */
-  }
-  {
-    isLoading && (
-      <div className="flex justify-center items-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center py-12 min-h-screen bg-white">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen  py-3 sm:py-6 lg:py-8 px-3 sm:px-4 lg:px-6">
+    <div className="min-h-screen bg-white py-3 sm:py-6 lg:py-8 px-3 sm:px-4 lg:px-6">
       <div className="max-w-7xl mx-auto">
-        <div className="bg-[#161f2f] rounded-xl sm:rounded-2xl shadow-2xl overflow-hidden mb-4 sm:mb-6 border border-gray-800">
-          <div className="relative  px-4 sm:px-6 lg:px-8 py-5 sm:py-8">
+        <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg overflow-hidden mb-4 sm:mb-6 border border-gray-100">
+          <div className="relative px-4 sm:px-6 lg:px-8 py-5 sm:py-8 bg-linear-to-r from-blue-50 to-indigo-50">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-              <div className="w-14 h-14 sm:w-20 sm:h-20 bg-white rounded-full flex items-center justify-center shrink-0 shadow-xl">
-                <User className="w-7 h-7 sm:w-10 sm:h-10 text-purple-600" />
+              <div className="w-14 h-14 sm:w-20 sm:h-20 bg-linear-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center shrink-0 shadow-lg">
+                <User className="w-7 h-7 sm:w-10 sm:h-10 text-white" />
               </div>
-              <div className="text-white flex-1 min-w-0">
+              <div className="text-gray-900 flex-1 min-w-0">
                 <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-1 break">
                   {profile.prefix} {profile.fnameTh} {profile.lnameTh}
                 </h1>
-                <p className="text-blue-100 text-sm sm:text-base break">
+                <p className="text-gray-500 text-sm sm:text-base break">
                   {profile.fnameEn} {profile.lnameEn}
                 </p>
               </div>
@@ -206,7 +203,7 @@ export default function UserProfilePage() {
                 {!isEditing ? (
                   <button
                     onClick={() => setIsEditing(true)}
-                    className="flex-1 sm:flex-none bg-white text-purple-600 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold hover:bg-blue-50 transition-all active:scale-95 flex items-center justify-center gap-2 text-sm sm:text-base shadow-lg"
+                    className="flex-1 sm:flex-none bg-blue-600 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold hover:bg-blue-700 transition-all active:scale-95 flex items-center justify-center gap-2 text-sm sm:text-base shadow-md"
                   >
                     <Edit className="w-4 h-4 sm:w-5 sm:h-5" />
                     <span>แก้ไข</span>
@@ -215,14 +212,14 @@ export default function UserProfilePage() {
                   <>
                     <button
                       onClick={handleSave}
-                      className="flex-1 sm:flex-none bg-green-500 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold hover:bg-green-600 transition-all active:scale-95 flex items-center justify-center gap-2 text-sm shadow-lg"
+                      className="flex-1 sm:flex-none bg-emerald-600 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold hover:bg-emerald-700 transition-all active:scale-95 flex items-center justify-center gap-2 text-sm shadow-md"
                     >
                       <Check className="w-4 h-4 sm:w-5 sm:h-5" />
                       <span className="hidden sm:inline">บันทึก</span>
                     </button>
                     <button
                       onClick={handleCancel}
-                      className="flex-1 sm:flex-none bg-red-500 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold hover:bg-red-600 transition-all active:scale-95 flex items-center justify-center gap-2 text-sm shadow-lg"
+                      className="flex-1 sm:flex-none bg-red-600 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold hover:bg-red-700 transition-all active:scale-95 flex items-center justify-center gap-2 text-sm shadow-md"
                     >
                       <X className="w-4 h-4 sm:w-5 sm:h-5" />
                       <span className="hidden sm:inline">ยกเลิก</span>
@@ -233,20 +230,20 @@ export default function UserProfilePage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 sm:p-6 bg-[#172131]">
-            <div className="bg-[#161f2f] rounded-lg p-3 sm:p-4 border border-gray-800 hover:border-blue-500 transition-colors">
-              <div className="text-xs sm:text-sm text-gray-400 mb-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 sm:p-6 bg-white">
+            <div className="bg-gray-50 rounded-lg p-3 sm:p-4 border border-gray-100 hover:border-blue-200 transition-colors">
+              <div className="text-xs sm:text-sm text-gray-500 mb-1">
                 รหัสผู้ใช้
               </div>
-              <div className="font-bold text-blue-400 text-sm sm:text-base">
+              <div className="font-bold text-blue-700 text-sm sm:text-base">
                 {profile.codeId}
               </div>
             </div>
-            <div className="bg-[#161f2f] rounded-lg p-3 sm:p-4 border border-gray-800 hover:border-purple-500 transition-colors">
-              <div className="text-xs sm:text-sm text-gray-400 mb-1">
+            <div className="bg-gray-50 rounded-lg p-3 sm:p-4 border border-gray-100 hover:border-purple-200 transition-colors">
+              <div className="text-xs sm:text-sm text-gray-500 mb-1">
                 ตำแหน่ง
               </div>
-              <div className="font-bold text-purple-400 text-sm sm:text-base">
+              <div className="font-bold text-purple-700 text-sm sm:text-base">
                 {profile.role}
               </div>
             </div>
@@ -254,14 +251,14 @@ export default function UserProfilePage() {
         </div>
 
         <div className="space-y-4 sm:space-y-6">
-          <section className="bg-[#161f2f] rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8 border border-gray-800">
-            <h2 className="text-lg sm:text-xl font-bold text-white mb-4 sm:mb-6 flex items-center gap-2">
-              <User className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400" />
+          <section className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 lg:p-8 border border-gray-100">
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2">
+              <User className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
               ข้อมูลส่วนตัว
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-gray-400 mb-2">
+                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                   ชื่อ (ไทย)
                 </label>
                 <input
@@ -276,7 +273,7 @@ export default function UserProfilePage() {
                 />
               </div>
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-gray-400 mb-2">
+                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                   นามสกุล (ไทย)
                 </label>
                 <input
@@ -291,7 +288,7 @@ export default function UserProfilePage() {
                 />
               </div>
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-gray-400 mb-2">
+                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                   ชื่อ (อังกฤษ)
                 </label>
                 <input
@@ -306,7 +303,7 @@ export default function UserProfilePage() {
                 />
               </div>
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-gray-400 mb-2">
+                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                   นามสกุล (อังกฤษ)
                 </label>
                 <input
@@ -321,7 +318,7 @@ export default function UserProfilePage() {
                 />
               </div>
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-gray-400 mb-2">
+                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                   Reference No.1
                 </label>
                 <input
@@ -332,7 +329,7 @@ export default function UserProfilePage() {
                 />
               </div>
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-gray-400 mb-2">
+                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                   ประเภทอาหาร
                 </label>
                 <input
@@ -345,14 +342,14 @@ export default function UserProfilePage() {
             </div>
           </section>
 
-          <section className="bg-[#161f2f] rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8 border border-gray-800">
-            <h2 className="text-lg sm:text-xl font-bold text-white mb-4 sm:mb-6 flex items-center gap-2">
-              <Edit className="w-5 h-5 sm:w-6 sm:h-6 text-purple-400" />
+          <section className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 lg:p-8 border border-gray-100">
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2">
+              <Edit className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
               ข้อมูลที่สามารถแก้ไขได้
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-gray-400 mb-2">
+                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                   ตำแหน่ง
                 </label>
                 <input
@@ -365,7 +362,7 @@ export default function UserProfilePage() {
                 />
               </div>
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-gray-400 mb-2">
+                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                   คำนำหน้า
                 </label>
                 <select
@@ -381,7 +378,7 @@ export default function UserProfilePage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-gray-400 mb-2">
+                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                   เพศ
                 </label>
                 <select
@@ -397,7 +394,7 @@ export default function UserProfilePage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-gray-400 mb-2">
+                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                   เชื้อชาติ
                 </label>
                 <input
@@ -410,7 +407,7 @@ export default function UserProfilePage() {
                 />
               </div>
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-gray-400 mb-2">
+                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                   สัญชาติ
                 </label>
                 <input
@@ -424,7 +421,7 @@ export default function UserProfilePage() {
               </div>
               {profile.role === "Vet" && (
                 <div>
-                  <label className="block text-xs sm:text-sm font-semibold text-gray-400 mb-2">
+                  <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                     รหัส CE
                   </label>
                   <input
@@ -440,7 +437,7 @@ export default function UserProfilePage() {
               )}
 
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-gray-400 mb-2">
+                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                   Line ID
                 </label>
                 <input
@@ -456,14 +453,14 @@ export default function UserProfilePage() {
             </div>
           </section>
 
-          <section className="bg-[#161f2f] rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8 border border-gray-800">
-            <h2 className="text-lg sm:text-xl font-bold text-white mb-4 sm:mb-6 flex items-center gap-2">
-              <Home className="w-5 h-5 sm:w-6 sm:h-6 text-green-400" />
+          <section className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 lg:p-8 border border-gray-100">
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2">
+              <Home className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600" />
               ที่อยู่
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="sm:col-span-2">
-                <label className="block text-xs sm:text-sm font-semibold text-gray-400 mb-2">
+                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                   บ้านเลขที่
                 </label>
                 <input
@@ -476,7 +473,7 @@ export default function UserProfilePage() {
                 />
               </div>
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-gray-400 mb-2">
+                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                   ตำบล/แขวง
                 </label>
                 <input
@@ -489,7 +486,7 @@ export default function UserProfilePage() {
                 />
               </div>
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-gray-400 mb-2">
+                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                   อำเภอ/เขต
                 </label>
                 <input
@@ -502,7 +499,7 @@ export default function UserProfilePage() {
                 />
               </div>
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-gray-400 mb-2">
+                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                   จังหวัด
                 </label>
                 <input
@@ -515,7 +512,7 @@ export default function UserProfilePage() {
                 />
               </div>
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-gray-400 mb-2">
+                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                   รหัสไปรษณีย์
                 </label>
                 <input
@@ -531,14 +528,14 @@ export default function UserProfilePage() {
           </section>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-            <section className="bg-[#161f2f] rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8 border border-gray-800">
-              <h2 className="text-lg sm:text-xl font-bold text-white mb-4 sm:mb-6 flex items-center gap-2">
-                <GraduationCap className="w-5 h-5 sm:w-6 sm:h-6 text-orange-400" />
+            <section className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 lg:p-8 border border-gray-100">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2">
+                <GraduationCap className="w-5 h-5 sm:w-6 sm:h-6 text-orange-600" />
                 ข้อมูลการศึกษา
               </h2>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs sm:text-sm font-semibold text-gray-400 mb-2">
+                  <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                     สถานศึกษาที่จบ
                   </label>
                   <input
@@ -552,7 +549,7 @@ export default function UserProfilePage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs sm:text-sm font-semibold text-gray-400 mb-2">
+                  <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                     ปีที่จบการศึกษา
                   </label>
                   <input
@@ -568,14 +565,14 @@ export default function UserProfilePage() {
               </div>
             </section>
 
-            <section className="bg-[#161f2f] rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8 border border-gray-800">
-              <h2 className="text-lg sm:text-xl font-bold text-white mb-4 sm:mb-6 flex items-center gap-2">
-                <Briefcase className="w-5 h-5 sm:w-6 sm:h-6 text-indigo-400" />
+            <section className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 lg:p-8 border border-gray-100">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2">
+                <Briefcase className="w-5 h-5 sm:w-6 sm:h-6 text-indigo-600" />
                 ข้อมูลการทำงาน
               </h2>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs sm:text-sm font-semibold text-gray-400 mb-2">
+                  <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                     สถานที่ทำงาน
                   </label>
                   <input
@@ -591,7 +588,7 @@ export default function UserProfilePage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs sm:text-sm font-semibold text-gray-400 mb-2">
+                  <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                     ที่อยู่สถานที่ทำงาน
                   </label>
                   <input
@@ -610,18 +607,18 @@ export default function UserProfilePage() {
             </section>
           </div>
 
-          <section className="bg-[#161f2f] rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8 border border-gray-800">
-            <h2 className="text-lg sm:text-xl font-bold text-white mb-4 sm:mb-6 flex items-center gap-2">
-              <Phone className="w-5 h-5 sm:w-6 sm:h-6 text-teal-400" />
+          <section className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 lg:p-8 border border-gray-100">
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2">
+              <Phone className="w-5 h-5 sm:w-6 sm:h-6 text-teal-600" />
               ข้อมูลติดต่อ
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-gray-400 mb-2">
+                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                   อีเมล
                 </label>
                 <div className="flex items-center gap-2">
-                  <Mail className="w-5 h-5 text-gray-500" />
+                  <Mail className="w-5 h-5 text-gray-400" />
                   <input
                     type="email"
                     value={profile.email}
@@ -631,11 +628,11 @@ export default function UserProfilePage() {
                 </div>
               </div>
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-gray-400 mb-2">
+                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                   เบอร์โทรศัพท์
                 </label>
                 <div className="flex items-center gap-2">
-                  <Phone className="w-5 h-5 text-gray-500" />
+                  <Phone className="w-5 h-5 text-gray-400" />
                   <input
                     type="tel"
                     value={profile.phone}
@@ -647,8 +644,8 @@ export default function UserProfilePage() {
             </div>
           </section>
 
-          <div className="bg-[#161f2f] rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6 border border-gray-800">
-            <div className="flex items-center gap-2 text-sm text-gray-400">
+          <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 border border-gray-100">
+            <div className="flex items-center gap-2 text-sm text-gray-500">
               <Calendar className="w-4 h-4" />
               <span>สร้างบัญชี: {formatThaiDate(profile.createdAt)}</span>
               <span className="mx-2">•</span>
