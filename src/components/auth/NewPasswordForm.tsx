@@ -1,7 +1,6 @@
 import {
   AlertCircle,
   Check,
-  CheckCircle,
   Eye,
   EyeOff,
   KeyRound,
@@ -10,6 +9,7 @@ import {
   Shield,
   X,
 } from "lucide-react";
+import Swal from "sweetalert2";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import NotKey from "../layouts/NotKey";
@@ -33,7 +33,6 @@ export default function NewPasswordForm() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [info, setInfo] = useState("");
   const [passwordTouched, setPasswordTouched] = useState(false);
   const [confirmTouched, setConfirmTouched] = useState(false);
   const [id, setId] = useState<number | null>(null);
@@ -183,9 +182,15 @@ export default function NewPasswordForm() {
       const payload = { id, email, codeId, password };
       const response = await newPasswordUser(payload as any);
       if (!response.success) throw new Error(response.message);
-      setInfo("รหัสผ่านใหม่ถูกสร้างเรียบร้อยแล้ว");
       setIsLoading(false);
-      setTimeout(() => navigate("/sign-in", { replace: true }), 2000);
+      await Swal.fire({
+        icon: "success",
+        title: "สำเร็จ",
+        text: "รหัสผ่านใหม่ถูกสร้างเรียบร้อยแล้ว",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      navigate("/sign-in", { replace: true });
     } catch (err) {
       setError("ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้");
     } finally {
@@ -227,159 +232,149 @@ export default function NewPasswordForm() {
             </div>
           )}
 
-          {info ? (
-            <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 flex items-start gap-3">
-              <CheckCircle
-                className="text-emerald-600 shrink-0 mt-0.5"
-                size={20}
-              />
-              <p className="text-sm font-bold text-emerald-900">{info}</p>
-            </div>
-          ) : (
-            <>
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
-                  <Lamp size={16} className="text-blue-600" />
-                  รหัสผ่านใหม่ / New Password
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => {
-                      setPassword(e.target.value);
-                      lastActionRef.current = Date.now();
-                    }}
-                    onBlur={() => setPasswordTouched(true)}
-                    className="w-full pl-10 pr-12 py-3.5 bg-gray-50 border-2 border-gray-100 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none transition-all font-medium text-gray-900"
-                    placeholder="••••••••"
-                    disabled={isLoading}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600"
-                  >
-                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                  </button>
-                </div>
+          <>
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                <Lamp size={16} className="text-blue-600" />
+                รหัสผ่านใหม่ / New Password
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    lastActionRef.current = Date.now();
+                  }}
+                  onBlur={() => setPasswordTouched(true)}
+                  className="w-full pl-10 pr-12 py-3.5 bg-gray-50 border-2 border-gray-100 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none transition-all font-medium text-gray-900"
+                  placeholder="••••••••"
+                  disabled={isLoading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
 
-                {passwordTouched && password && (
-                  <div className="mt-3 p-4 bg-gray-50 rounded-2xl border border-gray-100 space-y-3">
-                    <div className="flex items-center gap-3">
-                      <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                        <div
-                          className="h-full transition-all duration-500"
-                          style={{
-                            width: `${(passwordStrength.score / 5) * 100}%`,
-                            backgroundColor: passwordStrength.color,
-                          }}
-                        />
-                      </div>
-                      <span
-                        className="text-xs font-black uppercase tracking-wider"
-                        style={{ color: passwordStrength.color }}
-                      >
-                        {passwordStrength.label}
-                      </span>
+              {passwordTouched && password && (
+                <div className="mt-3 p-4 bg-gray-50 rounded-2xl border border-gray-100 space-y-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div
+                        className="h-full transition-all duration-500"
+                        style={{
+                          width: `${(passwordStrength.score / 5) * 100}%`,
+                          backgroundColor: passwordStrength.color,
+                        }}
+                      />
                     </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {[
-                        {
-                          check: password.length >= 8,
-                          text: "ยาว 8 ตัวขึ้นไป",
-                        },
-                        {
-                          check: /[A-Z]/.test(password),
-                          text: "มีพิมพ์ใหญ่ A-Z",
-                        },
-                        {
-                          check: /[a-z]/.test(password),
-                          text: "มีพิมพ์เล็ก a-z",
-                        },
-                        { check: /[0-9]/.test(password), text: "มีตัวเลข 0-9" },
-                        {
-                          check: /[^A-Za-z0-9]/.test(password),
-                          text: "มีอักขระพิเศษ",
-                        },
-                      ].map((req, idx) => (
-                        <div
-                          key={idx}
-                          className="flex items-center gap-2 text-xs font-bold"
-                        >
-                          {req.check ? (
-                            <Check className="text-emerald-500" size={14} />
-                          ) : (
-                            <X className="text-gray-300" size={14} />
-                          )}
-                          <span
-                            className={
-                              req.check ? "text-emerald-700" : "text-gray-400"
-                            }
-                          >
-                            {req.text}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
+                    <span
+                      className="text-xs font-black uppercase tracking-wider"
+                      style={{ color: passwordStrength.color }}
+                    >
+                      {passwordStrength.label}
+                    </span>
                   </div>
-                )}
-              </div>
 
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
-                  <Shield size={16} className="text-blue-600" />
-                  ยืนยันรหัสผ่าน / Confirm Password
-                </label>
-                <div className="relative">
-                  <input
-                    type={showConfirmPassword ? "text" : "password"}
-                    value={confirmPassword}
-                    onChange={(e) => {
-                      setConfirmPassword(e.target.value);
-                      lastActionRef.current = Date.now();
-                    }}
-                    onBlur={() => setConfirmTouched(true)}
-                    className={`w-full pl-10 pr-12 py-3.5 bg-gray-50 border-2 rounded-xl focus:ring-4 outline-none transition-all font-medium ${
-                      confirmTouched && confirmPassword
-                        ? passwordsMatch
-                          ? "border-emerald-200 focus:ring-emerald-500/10"
-                          : "border-red-200 focus:ring-red-500/10"
-                        : "border-gray-100 focus:ring-blue-500/10 focus:border-blue-500"
-                    }`}
-                    placeholder="••••••••"
-                    disabled={isLoading}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600"
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff size={20} />
-                    ) : (
-                      <Eye size={20} />
-                    )}
-                  </button>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {[
+                      {
+                        check: password.length >= 8,
+                        text: "ยาว 8 ตัวขึ้นไป",
+                      },
+                      {
+                        check: /[A-Z]/.test(password),
+                        text: "มีพิมพ์ใหญ่ A-Z",
+                      },
+                      {
+                        check: /[a-z]/.test(password),
+                        text: "มีพิมพ์เล็ก a-z",
+                      },
+                      { check: /[0-9]/.test(password), text: "มีตัวเลข 0-9" },
+                      {
+                        check: /[^A-Za-z0-9]/.test(password),
+                        text: "มีอักขระพิเศษ",
+                      },
+                    ].map((req, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-center gap-2 text-xs font-bold"
+                      >
+                        {req.check ? (
+                          <Check className="text-emerald-500" size={14} />
+                        ) : (
+                          <X className="text-gray-300" size={14} />
+                        )}
+                        <span
+                          className={
+                            req.check ? "text-emerald-700" : "text-gray-400"
+                          }
+                        >
+                          {req.text}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
+            </div>
 
-              <button
-                onClick={handleSubmit}
-                disabled={
-                  isLoading || !passwordsMatch || passwordStrength.score < 3
-                }
-                className="w-full bg-linear-to-r from-blue-600 to-indigo-600 text-white py-4 rounded-xl font-black shadow-lg shadow-blue-500/20 active:scale-95 transition-all disabled:opacity-50"
-              >
-                {isLoading ? (
-                  <RefreshCw className="animate-spin mx-auto" size={24} />
-                ) : (
-                  "ยืนยันรหัสผ่านใหม่ / Confirm"
-                )}
-              </button>
-            </>
-          )}
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                <Shield size={16} className="text-blue-600" />
+                ยืนยันรหัสผ่าน / Confirm Password
+              </label>
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={(e) => {
+                    setConfirmPassword(e.target.value);
+                    lastActionRef.current = Date.now();
+                  }}
+                  onBlur={() => setConfirmTouched(true)}
+                  className={`w-full pl-10 pr-12 py-3.5 bg-gray-50 border-2 rounded-xl focus:ring-4 outline-none transition-all font-medium ${
+                    confirmTouched && confirmPassword
+                      ? passwordsMatch
+                        ? "border-emerald-200 focus:ring-emerald-500/10"
+                        : "border-red-200 focus:ring-red-500/10"
+                      : "border-gray-100 focus:ring-blue-500/10 focus:border-blue-500"
+                  }`}
+                  placeholder="••••••••"
+                  disabled={isLoading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600"
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff size={20} />
+                  ) : (
+                    <Eye size={20} />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <button
+              onClick={handleSubmit}
+              disabled={
+                isLoading || !passwordsMatch || passwordStrength.score < 3
+              }
+              className="w-full bg-linear-to-r from-blue-600 to-indigo-600 text-white py-4 rounded-xl font-black shadow-lg shadow-blue-500/20 active:scale-95 transition-all disabled:opacity-50"
+            >
+              {isLoading ? (
+                <RefreshCw className="animate-spin mx-auto" size={24} />
+              ) : (
+                "ยืนยันรหัสผ่านใหม่ / Confirm"
+              )}
+            </button>
+          </>
         </div>
 
         <div className="mt-8 pt-6 border-t border-gray-100">

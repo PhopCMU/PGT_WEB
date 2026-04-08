@@ -6,15 +6,12 @@ import {
   EyeOff,
   ArrowRight,
   AlertTriangle,
-  CheckCheck,
   User,
-  Sparkles,
   ChevronRight,
   Fingerprint,
-  Server,
-  Cpu,
   KeyRound,
 } from "lucide-react";
+import Swal from "sweetalert2";
 import pgticon from "../../assets/pgt.svg";
 import { useNavigate } from "react-router-dom";
 import { Policy } from "../Policys";
@@ -32,7 +29,6 @@ export default function LoginForm() {
   const [showPolicy, setShowPolicy] = useState(false);
   const [showReset, setShowReset] = useState(false);
   const [error, setError] = useState("");
-  const [info, setInfo] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { showAlert } = useAlert();
   const [showInstructions, setShowInstructions] = useState(false);
@@ -93,8 +89,14 @@ export default function LoginForm() {
       }
 
       saveToken(token);
-      setInfo("ยืนยันการเข้าสู่ระบบสำเร็จ");
       setIsLoading(false);
+      await Swal.fire({
+        icon: "success",
+        title: "สำเร็จ",
+        text: "ยืนยันการเข้าสู่ระบบสำเร็จ",
+        timer: 1500,
+        showConfirmButton: false,
+      });
       navigate("/dashboard", { replace: true });
     } catch (error) {
       showAlert({
@@ -241,7 +243,11 @@ export default function LoginForm() {
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
                       >
-                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                        {showPassword ? (
+                          <EyeOff className="h-5 w-5" />
+                        ) : (
+                          <Eye className="h-5 w-5" />
+                        )}
                       </button>
                     </div>
                   </div>
@@ -250,7 +256,9 @@ export default function LoginForm() {
                     <div className="bg-red-50 border border-red-100 p-4 rounded-xl flex items-start gap-3">
                       <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
                       <div>
-                        <p className="font-bold text-red-900 text-sm">{error}</p>
+                        <p className="font-bold text-red-900 text-sm">
+                          {error}
+                        </p>
                       </div>
                     </div>
                   )}
