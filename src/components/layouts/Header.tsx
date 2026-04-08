@@ -144,19 +144,40 @@ const Header = ({
 
           {/* QR Scanner (Primary Action) */}
           <button
-            onClick={openQRScanner}
-            className="relative -top-8 flex flex-col items-center"
+            onClick={() => (user ? openQRScanner() : undefined)}
+            className={`relative -top-8 flex flex-col items-center ${user ? "" : "opacity-40"}`}
+            disabled={!user}
+            aria-disabled={!user}
+            title={user ? "สแกน QR" : "ต้องเข้าสู่ระบบเพื่อสแกน QR"}
           >
             {/* Floating Button */}
-            <div className="w-16 h-16 rounded-full bg-linear-to-br from-indigo-600 to-purple-600 flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow active:scale-95">
-              <div className="w-14 h-14 rounded-full bg-linear-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
-                <QrCode className="w-7 h-7 text-white" />
+            <div
+              className={`w-16 h-16 rounded-full flex items-center justify-center shadow-lg transition-shadow ${
+                user
+                  ? "bg-linear-to-br from-indigo-600 to-purple-600 hover:shadow-xl active:scale-95"
+                  : "bg-gray-200"
+              }`}
+            >
+              <div
+                className={`w-14 h-14 rounded-full flex items-center justify-center ${
+                  user
+                    ? "bg-linear-to-br from-indigo-500 to-purple-500"
+                    : "bg-gray-300"
+                }`}
+              >
+                <QrCode
+                  className={`${user ? "w-7 h-7 text-white" : "w-7 h-7 text-gray-400"}`}
+                />
               </div>
 
               {/* Animated Ring */}
-              <div className="absolute inset-0 rounded-full border-2 border-white/30 animate-ping opacity-75"></div>
+              {user && (
+                <div className="absolute inset-0 rounded-full border-2 border-white/30 animate-ping opacity-75"></div>
+              )}
             </div>
-            <span className="text-xs font-medium text-gray-700 mt-1">
+            <span
+              className={`text-xs font-medium mt-1 ${user ? "text-gray-700" : "text-gray-400"}`}
+            >
               สแกน QR
             </span>
           </button>
