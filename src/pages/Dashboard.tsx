@@ -657,7 +657,7 @@ export default function Dashboard() {
           </div>
 
           {/* Info Footer */}
-          {!isNotYetOpen(project.open_regi) && user && (
+          {!isNotYetOpen(project.open_regi) && user && selectedType && (
             <>
               <div className="pt-4 border-t border-gray-100">
                 <div className="flex items-center justify-between text-sm text-gray-500">
