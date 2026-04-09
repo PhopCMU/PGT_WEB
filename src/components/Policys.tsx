@@ -267,7 +267,7 @@ export const Policy: React.FC<PolicyProps> = ({ isOpen, onClose }) => {
                         โทรศัพท์
                       </p>
                       <p className="text-gray-700 text-sm sm:text-base">
-                        053-948-095
+                        053-948-015
                       </p>
                     </div>
                   </div>
